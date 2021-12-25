@@ -1,24 +1,82 @@
 package models;
 
-import connect.Connect;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Vector;
+
+import connect.Database;
+import controllers.ProductHandler;
 
 public class CartItem {
+	private Integer id;
 	private Product product;
 	private Integer quantity;
-	private final String table = "cartitem";
-	private Connect conn = Connect.getInstance();
+	private final String table = "cart_item";
+	private Database db = Database.getInstance();
+
 	public CartItem() {
 		// TODO Auto-generated constructor stub
 	}
+
+	private CartItem map(ResultSet rs) {
+		try {
+			Integer id = rs.getInt("id");
+			Integer productId = rs.getInt("product_id");
+			Integer quantity = rs.getInt("quantity");
+			Product productTemp = ProductHandler.getInstance().getProduct(productId);
+			CartItem cartItem = new CartItem(productTemp, quantity, id);
+			return cartItem;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public List<CartItem> getAllCartItems() {
+		String query = String.format("SELECT * FROM %s", this.table);
+		ResultSet rs = db.executeQuery(query);
+		Vector<CartItem> listCart = new Vector<CartItem>();
+		try {
+			while (rs.next()) {
+				CartItem cartItem = map(rs);
+				listCart.add(cartItem);
+			}
+			return listCart;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public CartItem(Product product, Integer quantity, Integer id) {
+		super();
+		this.product = product;
+		this.quantity = quantity;
+		this.id = id;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	public Product getProduct() {
 		return product;
 	}
+
 	public void setProduct(Product product) {
 		this.product = product;
 	}
+
 	public Integer getQuantity() {
 		return quantity;
 	}
+
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}

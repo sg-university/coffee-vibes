@@ -2,14 +2,14 @@ package models;
 
 import java.util.List;
 
-import connect.Connect;
+import connect.Database;
 
 public class Voucher {
 	private Integer voucherID;
 	private Integer discount;
 	private String status;
 	private final String table = "voucher";
-	private Connect conn = Connect.getInstance();
+	private Database db = Database.getInstance();
 	
 	public Voucher() {
 		// TODO Auto-generated constructor stub
