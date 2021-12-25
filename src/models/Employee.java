@@ -1,5 +1,8 @@
 package models;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
 
@@ -19,7 +22,57 @@ public class Employee {
 		// TODO Auto-generated constructor stub
 	}
 	
+	
+	
+	public Employee(Integer employeeID, Integer positionID, String name, String status, Integer salary, String username,
+			String password) {
+		super();
+		this.employeeID = employeeID;
+		this.positionID = positionID;
+		this.name = name;
+		this.status = status;
+		this.salary = salary;
+		this.username = username;
+		this.password = password;
+	}
 
+
+
+	private Employee map(ResultSet rs) {
+		try {
+			int id = rs.getInt("id");
+			int positionId = rs.getInt("position_id");
+			String name = rs.getString("name");
+			String status = rs.getString("status");
+			int salary = rs.getInt("salary");
+			String username = rs.getString("username");
+			String password = rs.getString("password");
+			return new Employee(id, positionId, name, status, salary, username, password);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return null;
+	}
+	public Employee getEmployeeByLogin(String username,String password) {
+		String query = String.format("SELECT * FROM %s WHERE username = ? AND password = ?", this.table);
+		PreparedStatement pstmt = conn.prepareStatement(query);
+		try {
+			pstmt.setString(1, username);
+			pstmt.setString(2, password);
+			pstmt.execute();
+			ResultSet rs = pstmt.getResultSet();
+			if(rs.next()) {
+//				System.out.println("test");
+				return map(rs);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
 	public Employee insertEmployee() {
 		
 		return null;
