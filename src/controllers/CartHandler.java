@@ -1,6 +1,7 @@
 package controllers;
 
 import java.util.List;
+import java.util.Vector;
 
 import models.CartItem;
 import models.Product;
@@ -8,6 +9,8 @@ import models.Product;
 public class CartHandler {
 	private static CartHandler cartHandler = null;
 	private List<CartItem> listItem;
+	private CartItem cartItem;
+	private String errorMsg;
 	public static synchronized CartHandler getInstance() {
 		if(cartHandler == null) {
 			cartHandler = new CartHandler();
@@ -18,6 +21,8 @@ public class CartHandler {
 	
 	private CartHandler() {
 		// TODO Auto-generated constructor stub
+		listItem = new Vector<CartItem>();
+		cartItem = new CartItem();
 	}
 
 	public CartItem addToCart(Integer productID, Integer quantity) {
@@ -35,8 +40,14 @@ public class CartHandler {
 	}
 	
 	public List<CartItem> getCart(){
-		
-		return this.listItem;
+		listItem = cartItem.getAllCartItems();
+		if(listItem != null) {
+			return listItem;
+		}else {
+			listItem = new Vector<CartItem>();
+			errorMsg = "There is no CartItem";
+		}
+		return null;
 	}
 	
 	public Product getProduct(Integer productID) {
