@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import models.CartItem;
 import models.Product;
+import views.CartManagementForm;
 
 public class CartHandler {
 	private static CartHandler cartHandler = null;
@@ -28,6 +29,9 @@ public class CartHandler {
 	public CartItem addToCart(Integer productID, Integer quantity) {
 		
 		return null;
+	}
+	public void viewCartManagementForm() {
+		new CartManagementForm();
 	}
 	
 	public void viewAddProductToCartForm() {
