@@ -1,12 +1,12 @@
 import connect.Connect;
+import controllers.AuthHandler;
 import views.LoginForm;
 
 public class Program {
 
 	public Program() {
-//		Connect.getInstance();
-//		System.out.println("Test");
-		LoginForm log = new LoginForm();
+
+		AuthHandler.getInstance().viewLoginForm();
 		// TODO Auto-generated constructor stub
 	}
 

@@ -1,6 +1,7 @@
 package controllers;
 
 import models.Employee;
+import views.LoginForm;
 
 public class AuthHandler {
 	private static AuthHandler authHandler;
@@ -45,5 +46,8 @@ public class AuthHandler {
 		}
 		
 		return false;
+	}
+	public void viewLoginForm() {
+		new LoginForm();
 	}
 }
