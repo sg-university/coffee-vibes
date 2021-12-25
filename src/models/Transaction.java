@@ -3,7 +3,7 @@ package models;
 import java.util.Date;
 import java.util.List;
 
-import connect.Connect;
+import connect.Database;
 
 public class Transaction {
 	private Integer transactionID;
@@ -13,7 +13,7 @@ public class Transaction {
 	private Integer totalPrice;
 	private List<TransactionItem> listTransactionItem;
 	private final String table = "transaction";
-	private Connect conn = Connect.getInstance();
+	private Database db = Database.getInstance();
 	public Transaction() {
 		// TODO Auto-generated constructor stub
 	}

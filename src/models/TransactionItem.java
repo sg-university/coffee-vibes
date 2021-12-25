@@ -1,13 +1,13 @@
 package models;
 
-import connect.Connect;
+import connect.Database;
 
 public class TransactionItem {
 	private Integer transactionID;
 	private Integer productID;
 	private Integer quantity;
 	private final String table = "transactionitem";
-	private Connect conn = Connect.getInstance();
+	private Database db = Database.getInstance();
 	public TransactionItem() {
 		// TODO Auto-generated constructor stub
 	}

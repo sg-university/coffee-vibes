@@ -2,13 +2,13 @@ package models;
 
 import java.util.List;
 
-import connect.Connect;
+import connect.Database;
 
 public class Position {
 	private Integer positionID;
 	private String name;
 	private final String table = "position";
-	private Connect conn = Connect.getInstance();
+	private Database db = Database.getInstance();
 	public Position() {
 		// TODO Auto-generated constructor stub
 	}

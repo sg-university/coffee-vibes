@@ -3,10 +3,10 @@ package models;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
-import connect.Connect;
+import connect.Database;
 
 public class Employee {
 	private Integer employeeID;
@@ -17,13 +17,12 @@ public class Employee {
 	private String username;
 	private String password;
 	private final String table = "employee";
-	private Connect conn = Connect.getInstance();
+	private Database db = Database.getInstance();
+
 	public Employee() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	
-	
+
 	public Employee(Integer employeeID, Integer positionID, String name, String status, Integer salary, String username,
 			String password) {
 		super();
@@ -36,69 +35,153 @@ public class Employee {
 		this.password = password;
 	}
 
-
+	@Override
+	public String toString() {
+		return "Employee [employeeID=" + employeeID + ", positionID=" + positionID + ", name=" + name + ", status="
+				+ status + ", salary=" + salary + ", username=" + username + ", password=" + password + ", table="
+				+ table + ", db=" + db + "]";
+	}
 
 	private Employee map(ResultSet rs) {
 		try {
-			int id = rs.getInt("id");
-			int positionId = rs.getInt("position_id");
+			Integer id = rs.getInt("id");
+			Integer positionId = rs.getInt("position_id");
 			String name = rs.getString("name");
 			String status = rs.getString("status");
-			int salary = rs.getInt("salary");
+			Integer salary = rs.getInt("salary");
 			String username = rs.getString("username");
 			String password = rs.getString("password");
-			return new Employee(id, positionId, name, status, salary, username, password);
+			Employee employee = new Employee(id, positionId, name, status, salary, username, password);
+			return employee;
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return null;
-	}
-	public Employee getEmployeeByLogin(String username,String password) {
-		String query = String.format("SELECT * FROM %s WHERE username = ? AND password = ?", this.table);
-		PreparedStatement pstmt = conn.prepareStatement(query);
-		try {
-			pstmt.setString(1, username);
-			pstmt.setString(2, password);
-			pstmt.execute();
-			ResultSet rs = pstmt.getResultSet();
-			if(rs.next()) {
-//				System.out.println("test");
-				return map(rs);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return null;
-	}
-	
-	public Employee insertEmployee() {
-		
 		return null;
 	}
 
-	public List<Employee> getAllEmployees(){
-		
+	public Employee getEmployeeByLogin(String username, String password) {
+		String sql = String.format("select * from %s where username = ? AND password = ?", this.table);
+		PreparedStatement ps = this.db.prepareStatement(sql);
+		try {
+			ps.setString(1, username);
+			ps.setString(2, password);
+			ps.execute();
+			ResultSet rs = ps.getResultSet();
+			while (rs.next()) {
+				return map(rs);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 		return null;
 	}
-	
+
+	public Employee insertEmployee() {
+		String sql = String.format("insert into %s values (?, ?, ?, ?, ?, ?, ?)", this.table);
+		PreparedStatement ps = this.db.prepareStatement(sql);
+		try {
+			ps.setInt(1, this.employeeID);
+			ps.setInt(2, this.positionID);
+			ps.setString(3, this.name);
+			ps.setString(4, this.status);
+			ps.setInt(5, this.salary);
+			ps.setString(6, this.username);
+			ps.setString(7, this.password);
+			ps.execute();
+			if (ps.getUpdateCount() != 0) {
+				return this;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public List<Employee> getAllEmployees() {
+		String sql = String.format("select * from %s", this.table);
+		PreparedStatement ps = this.db.prepareStatement(sql);
+		try {
+			ps.execute();
+			ResultSet rs = ps.getResultSet();
+			List<Employee> employeeList = new ArrayList<Employee>();
+			while (rs.next()) {
+				Employee employee = this.map(rs);
+				employeeList.add(employee);
+			}
+			return employeeList;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 	public Employee getEmployee(String username) {
-		
+		String sql = String.format("select * from %s where username=?", this.table);
+		PreparedStatement ps = this.db.prepareStatement(sql);
+		try {
+			ps.setString(1, username);
+			ps.execute();
+			ResultSet rs = ps.getResultSet();
+			while (rs.next()) {
+				Employee employee = this.map(rs);
+				return employee;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 		return null;
 	}
-	
+
 	public Employee updateEmployee() {
-		
+		String sql = String.format(
+				"UPDATE employee SET position_id = ?, name = ?, status = ?, salary = ?, username = ?, password = ? WHERE id = ?",
+				this.table);
+		PreparedStatement ps = this.db.prepareStatement(sql);
+		try {
+			ps.setInt(7, this.employeeID);
+			ps.setInt(1, this.positionID);
+			ps.setString(2, this.name);
+			ps.setString(3, this.status);
+			ps.setInt(4, this.salary);
+			ps.setString(5, this.username);
+			ps.setString(6, this.password);
+			ps.execute();
+			if (ps.getUpdateCount() != 0) {
+				return this;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 		return null;
 	}
-	
-	public boolean fireEmployee(int id) {
-		
+
+	public boolean fireEmployee(Integer employeeID) {
+		String sql = String.format("delete from employee WHERE id = ?", this.table);
+		PreparedStatement ps = this.db.prepareStatement(sql);
+		try {
+			ps.setInt(1, employeeID);
+			ps.execute();
+			if (ps.getUpdateCount() != 0) {
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 		return false;
 	}
-	
-	
+
+	public String getPosition() {
+		EmployeePosition employeePosition = new EmployeePosition();
+		EmployeePosition gotEmployeePosition = employeePosition.getEmployeePositionByEmployeeID(this.employeeID);
+		return gotEmployeePosition.getEmployeePositionName();
+	}
+
 	public Integer getEmployeeID() {
 		return employeeID;
 	}
@@ -154,10 +237,5 @@ public class Employee {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
-	
-	
-	
-	
+
 }

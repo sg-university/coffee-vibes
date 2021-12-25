@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
 
-import connect.Connect;
+import connect.Database;
 import controllers.ProductHandler;
 
 public class CartItem {
@@ -13,53 +13,50 @@ public class CartItem {
 	private Product product;
 	private Integer quantity;
 	private final String table = "cart_item";
-	private Connect conn = Connect.getInstance();
+	private Database db = Database.getInstance();
+
 	public CartItem() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	private CartItem map(ResultSet rs) {
 		try {
-			int id = rs.getInt("id");
-			int productId = rs.getInt("product_id");
-			int quantity = rs.getInt("quantity");
+			Integer id = rs.getInt("id");
+			Integer productId = rs.getInt("product_id");
+			Integer quantity = rs.getInt("quantity");
 			Product productTemp = ProductHandler.getInstance().getProduct(productId);
-			CartItem cartItem = new CartItem(productTemp, quantity,id);
+			CartItem cartItem = new CartItem(productTemp, quantity, id);
 			return cartItem;
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
-	public List<CartItem> getAllCartItems(){
+
+	public List<CartItem> getAllCartItems() {
 		String query = String.format("SELECT * FROM %s", this.table);
-		ResultSet rs = conn.executeQuery(query);
+		ResultSet rs = db.executeQuery(query);
 		Vector<CartItem> listCart = new Vector<CartItem>();
 		try {
-			while(rs.next()) {
-				
+			while (rs.next()) {
 				CartItem cartItem = map(rs);
 				listCart.add(cartItem);
 			}
 			return listCart;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	
-	public CartItem(Product product, Integer quantity,Integer id) {
+
+	public CartItem(Product product, Integer quantity, Integer id) {
 		super();
 		this.product = product;
 		this.quantity = quantity;
 		this.id = id;
 	}
 
-	
 	public Integer getId() {
 		return id;
 	}
@@ -71,12 +68,15 @@ public class CartItem {
 	public Product getProduct() {
 		return product;
 	}
+
 	public void setProduct(Product product) {
 		this.product = product;
 	}
+
 	public Integer getQuantity() {
 		return quantity;
 	}
+
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}

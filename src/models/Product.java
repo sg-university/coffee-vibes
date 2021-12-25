@@ -4,7 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 
-import connect.Connect;
+import connect.Database;
 
 public class Product {
 	private Integer productID;
@@ -13,7 +13,7 @@ public class Product {
 	private Integer price;
 	private Integer stock;
 	private final String table = "product";
-	private Connect conn = Connect.getInstance();
+	private Database db = Database.getInstance();
 	public Product() {
 		// TODO Auto-generated constructor stub
 	}
@@ -52,7 +52,7 @@ public class Product {
 	
 	public Product getProduct(int productID) {
 		String query = String.format("SELECT * FROM %s WHERE id = ?", this.table);
-		PreparedStatement pstmt = conn.prepareStatement(query);
+		PreparedStatement pstmt = db.prepareStatement(query);
 		try {
 			pstmt.setInt(1, productID);
 			pstmt.execute();
