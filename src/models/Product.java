@@ -1,5 +1,7 @@
 package models;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
 
 import connect.Connect;
@@ -16,6 +18,15 @@ public class Product {
 		// TODO Auto-generated constructor stub
 	}
 	
+	public Product(Integer productID, String name, String description, Integer price, Integer stock) {
+		super();
+		this.productID = productID;
+		this.name = name;
+		this.description = description;
+		this.price = price;
+		this.stock = stock;
+	}
+
 	public Product insertNewProduct() {
 		
 		return null;
@@ -25,9 +36,33 @@ public class Product {
 		
 		return null;
 	}
+	private Product map(ResultSet rs) {
+		try {
+			int id = rs.getInt("id");
+			String name = rs.getString("name");
+			String description = rs.getString("description");
+			int price =rs.getInt("price");
+			int stock = rs.getInt("stock");
+			return new Product(id, name, description, price, stock);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return null;
+	}
 	
 	public Product getProduct(int productID) {
-		
+		String query = String.format("SELECT * FROM %s WHERE id = ?", this.table);
+		PreparedStatement pstmt = conn.prepareStatement(query);
+		try {
+			pstmt.setInt(1, productID);
+			pstmt.execute();
+			ResultSet rs = pstmt.getResultSet();
+			if(rs.next()) {
+				return map(rs);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		return null;
 	}
 	

@@ -6,7 +6,8 @@ import models.Product;
 
 public class ProductHandler {
 	private static ProductHandler productHandler = null;
-	
+	private Product product;
+	private String errorMsg;
 	public static synchronized ProductHandler getInstance() {
 		if(productHandler == null) {
 			productHandler = new ProductHandler();
@@ -14,8 +15,9 @@ public class ProductHandler {
 		
 		return productHandler;
 	}
-	public ProductHandler() {
+	private ProductHandler() {
 		// TODO Auto-generated constructor stub
+		product = new Product();
 	}
 
 	public void viewProductManagementForm() {
@@ -34,7 +36,13 @@ public class ProductHandler {
 	}
 	
 	public Product getProduct(Integer productID) {
-		
+		product = product.getProduct(productID);
+		if(product != null) {
+			return product;
+		}else {
+			product = new Product();
+			errorMsg = "Product Not Found";
+		}
 		return null;
 	}
 	
@@ -51,6 +59,18 @@ public class ProductHandler {
 	public boolean deleteProduct(Integer productID) {
 		
 		return false;
+	}
+	public Product getProduct() {
+		return product;
+	}
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
 	}
 	
 }
