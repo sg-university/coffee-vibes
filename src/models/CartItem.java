@@ -1,5 +1,6 @@
 package models;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -56,7 +57,42 @@ public class CartItem {
 		this.quantity = quantity;
 		this.id = id;
 	}
-
+	
+	public boolean updateCartItem(int id,int quantity) {
+		this.quantity+=quantity;
+		String query = String.format("UPDATE %s SET quantity = ? WHERE product_id = ?", this.table);
+		PreparedStatement ps = db.prepareStatement(query);
+		try {
+			ps.setInt(1, this.quantity);
+			ps.setInt(2, id);
+			System.out.println("quantity");
+			return ps.executeUpdate()==1;
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+		}
+		
+		return false;
+	}
+	
+	public CartItem insertNewCartItem() {
+		String query = String.format("INSERT INTO %s (product_id,quantity) VALUES (?, ?)", this.table);
+		PreparedStatement ps = db.prepareStatement(query);
+		try {
+			ps.setInt(1, this.getProduct().getProductID());
+			ps.setInt(2, this.quantity);
+			ps.execute();
+			if (ps.getUpdateCount() != 0) {
+				return this;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+		}
+		
+		return null;
+	}
+	
 	public Integer getId() {
 		return id;
 	}

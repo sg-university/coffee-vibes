@@ -40,7 +40,7 @@ public class EmployeeManagementForm extends JFrame implements ActionListener, Mo
 		JLabel title = new JLabel("Employee Management");
 		PNLtop.add(title);
 
-		JPanel PNLcenterTop = new JPanel();
+
 
 		GridLayout layout = new GridLayout(5, 1, 4, 4);
 
@@ -67,10 +67,8 @@ public class EmployeeManagementForm extends JFrame implements ActionListener, Mo
 		passText = new JTextField();
 
 		PNLcenter = new JPanel(new GridLayout(4, 1));
-		PNLcenter.add(PNLcenterTop, BorderLayout.NORTH);
-		PNLcenter.add(PNLcenterBottom, BorderLayout.SOUTH);
-
-		PNLcenterTop.add(new JScrollPane(TBLproduct), BorderLayout.NORTH);
+		PNLcenter.add(new JScrollPane(TBLproduct));
+		PNLcenter.add(PNLcenterBottom);
 
 		PNLcenterBottom.add(nameLBL);
 		PNLcenterBottom.add(nameText);
@@ -111,7 +109,7 @@ public class EmployeeManagementForm extends JFrame implements ActionListener, Mo
 		add(PNLcenter, BorderLayout.CENTER);
 		add(PNLbottom, BorderLayout.SOUTH);
 
-		setSize(800, 800);
+		setSize(800, 600);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 

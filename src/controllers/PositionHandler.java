@@ -2,11 +2,11 @@ package controllers;
 
 import java.util.List;
 
-import models.Position;
+import models.EmployeePosition;
 
 public class PositionHandler {
 	private static PositionHandler positionHandler = null;
-	private Position position;
+	private EmployeePosition position;
 	public static synchronized PositionHandler getInstance() {
 		if(positionHandler == null) positionHandler = new PositionHandler();
 		
@@ -17,12 +17,12 @@ public class PositionHandler {
 		// TODO Auto-generated constructor stub
 	}
 
-	public List<Position> getAllPositions(){
+	public List<EmployeePosition> getAllPositions(){
 		
 		return null;
 	}
 	
-	public Position getPosition(Integer positionID) {
+	public EmployeePosition getPosition(Integer positionID) {
 		
 		return null;
 	}

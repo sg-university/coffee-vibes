@@ -1,8 +1,10 @@
 package controllers;
 
 import java.util.List;
+import java.util.Vector;
 
 import models.Product;
+import views.ProductManagementForm;
 
 public class ProductHandler {
 	private static ProductHandler productHandler = null;
@@ -22,7 +24,7 @@ public class ProductHandler {
 
 	public void viewProductManagementForm() {
 		// TODO Auto-generated method stub
-
+		new ProductManagementForm();
 	}
 	
 	public Product insertProduct(String name,String description,Integer Price, Integer stock) {
@@ -31,8 +33,12 @@ public class ProductHandler {
 	}
 	
 	public List<Product> getAllProducts(){
-		
-		return null;
+		List<Product> temp = product.getAllProduct();
+		if(temp == null) {
+			errorMsg = "There is no product!";
+			return new Vector<Product>();
+		}
+		return temp;
 	}
 	
 	public Product getProduct(Integer productID) {

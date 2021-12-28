@@ -2,7 +2,9 @@ package models;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Vector;
 
 import connect.Database;
 
@@ -33,7 +35,19 @@ public class Product {
 	}
 	
 	public List<Product> getAllProduct(){
+		String query = String.format("SELECT * FROM %s", this.table);
 		
+		ResultSet rs = db.executeQuery(query);
+		Vector<Product> products = new Vector<Product>();
+		try {
+			while(rs.next()) {
+				products.add(map(rs));
+			}
+			return products;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 	private Product map(ResultSet rs) {

@@ -5,8 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import connect.*;
 
-import connect.Database;
 
 public class Employee {
 	private Integer employeeID;
@@ -138,7 +138,7 @@ public class Employee {
 
 	public Employee updateEmployee() {
 		String sql = String.format(
-				"UPDATE employee SET position_id = ?, name = ?, status = ?, salary = ?, username = ?, password = ? WHERE id = ?",
+				"UPDATE %s SET position_id = ?, name = ?, status = ?, salary = ?, username = ?, password = ? WHERE id = ?",
 				this.table);
 		PreparedStatement ps = this.db.prepareStatement(sql);
 		try {
