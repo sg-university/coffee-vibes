@@ -132,7 +132,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 				priceText.setEditable(false);
 				stockText.setEditable(false);
 				initTable();
-				PNLcenterBottom.add(new JLabel("Choose Product Name:"));
+				PNLcenterBottom.add(new JLabel("Choose Coffee ID To Adding To Cart:"));
 				PNLcenterBottom.add(nameCombo);
 				PNLbottom.add(addCartBut);
 			}

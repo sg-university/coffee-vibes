@@ -211,6 +211,7 @@ public class CartManagementForm extends JFrame implements ActionListener{
 			if(item != null) {
 				getTableData();
 				JOptionPane.showMessageDialog(this, CartHandler.getInstance().getErrorMsg());
+				this.dispose();
 			}else {
 				JOptionPane.showMessageDialog(this, CartHandler.getInstance().getErrorMsg());
 			}
