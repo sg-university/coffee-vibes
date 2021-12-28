@@ -20,11 +20,12 @@ import javax.swing.Spring;
 import javax.swing.SpringLayout;
 
 import controllers.AuthHandler;
+import controllers.ProductHandler;
 
 public class LoginForm extends JFrame implements ActionListener{
 	private JPanel panelTitle,panelForm,panelButton;
-	private JLabel labelTitle,labelUsername,labelPassword,errorMsg;
-	private JButton buttonLogin,buttonRegister;
+	private JLabel labelTitle,labelUsername,labelPassword;
+	private JButton buttonLogin;
 	private JTextField fieldUsername;
 	private JPasswordField fieldPassword;
 	private AuthHandler authHandler = AuthHandler.getInstance();
@@ -45,8 +46,6 @@ public class LoginForm extends JFrame implements ActionListener{
 		fieldUsername = new JTextField(15);
 		buttonLogin = new JButton("Login");
 		buttonLogin.addActionListener(this);
-		buttonRegister = new JButton("Register");
-		buttonRegister.addActionListener(this);
 		panelForm = new JPanel(new GridBagLayout());
 		GridBagConstraints cons = new GridBagConstraints();
 		
@@ -72,10 +71,7 @@ public class LoginForm extends JFrame implements ActionListener{
 		buttonCons.gridy = 0;
 		buttonCons.insets = new Insets(0,10,10,0);
 		panelButton.add(buttonLogin,buttonCons);
-		buttonCons.gridx = 1;
-		buttonCons.gridy = 0;
-	
-		panelButton.add(buttonRegister,buttonCons);
+
 		
 		cons.gridx = 1;
 		cons.gridy = 2;
@@ -108,12 +104,11 @@ public class LoginForm extends JFrame implements ActionListener{
 			boolean isLogin = authHandler.login(username, password);
 			if(isLogin) {
 				JOptionPane.showMessageDialog(this, "Login Success");
+				this.dispose();
+				ProductHandler.getInstance().viewProductManagementForm();
 			}else {
 				JOptionPane.showMessageDialog(this, AuthHandler.getInstance().getErrorMsg());
 			}
-		}else if(e.getSource() == buttonRegister) {
-			// logic buat pencet tombol register
-			System.out.println("Register");
 		}
 	}
 	

@@ -26,12 +26,68 @@ public class CartHandler {
 		cartItem = new CartItem();
 	}
 
-	public CartItem addToCart(Integer productID, Integer quantity) {
+	public CartItem addToCart(String productID, String quantity) {
+		int id = 0;
+		int qty = 0;
+		try {
+			int temp = Integer.parseInt(productID);
+			id = temp;
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			errorMsg = "ProductID must be Integer!";
+			return null;
+		}
 		
-		return null;
+		try {
+			int temp = Integer.parseInt(quantity);
+			qty = temp;
+		} catch (Exception e) {
+			errorMsg = "Quantity must be Integer!";
+			return null;
+			// TODO: handle exception
+		}
+		
+		Product product = new Product();
+		Product item = product.getProduct(id);
+		if(item == null) {
+			errorMsg = "There is no Product Available!";
+			return null;
+		}
+		
+		if(qty < 1 || qty > item.getStock()) {
+			errorMsg = "Quantity must be in 1 - " + item.getStock();
+			return null;
+		}
+		
+		for (CartItem cartItem : listItem) {
+			if(cartItem.getProduct().getProductID() == id) {
+				
+				if(cartItem.updateCartItem(id, qty)) {
+					errorMsg = "Item already in cart, Update Success!";
+					getCart();
+					return cartItem;
+				}
+				
+				errorMsg = "Item already in cart, Update Failed!";
+				return cartItem;
+			}
+		}
+		
+		CartItem cart = new CartItem(item, qty, id);
+		if(cart.insertNewCartItem() == null) {
+			errorMsg = "Insert Failed!";
+			return null;
+		}
+		errorMsg = "Insert Success!";
+		return cart;
 	}
 	public void viewCartManagementForm() {
 		new CartManagementForm();
+	}
+	
+	public void viewCartManagementForm(Product product) {
+		new CartManagementForm(product);
 	}
 	
 	public void viewAddProductToCartForm() {
@@ -74,6 +130,15 @@ public class CartHandler {
 		return false;
 	}
 	
+	
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
+	}
+
 	public void clearCart() {
 		
 	}

@@ -30,7 +30,7 @@ public class EmployeeHandler {
 		EmployeePosition employeePosition = new EmployeePosition();
 		List<Employee> employeeList = this.getAllEmployees();
 		List<EmployeePosition> employeePositionList = employeePosition.getAllEmployeePosition();
-
+		
 		Boolean isPositionAvailable = employeePositionList.parallelStream()
 				.anyMatch(x -> x.getEmployeePositionName().equals(position));
 		if (!isPositionAvailable) {
@@ -147,5 +147,7 @@ public class EmployeeHandler {
 
 		return deletedEmploye;
 	}
+
+
 
 }

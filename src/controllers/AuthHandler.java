@@ -39,6 +39,7 @@ public class AuthHandler {
 		employee = employee.getEmployeeByLogin(username, password);
 		
 		if(employee != null) {
+			
 			return true;
 		}else {
 			employee = new Employee();

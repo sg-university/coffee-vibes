@@ -16,6 +16,9 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -24,6 +27,7 @@ import javax.swing.table.DefaultTableModel;
 
 import controllers.CartHandler;
 import models.CartItem;
+import models.Product;
 
 public class CartManagementForm extends JFrame implements ActionListener{
 	private JTable table;
@@ -31,10 +35,10 @@ public class CartManagementForm extends JFrame implements ActionListener{
 	private JLabel labelQuantity,labelName,labelID,labelIDVal,labelNameVal,labelProductID,labelProductVal;
 	private JTextField fieldQuantity;
 	private JScrollPane scrollPane;
-	private JPanel panelBottom,panelInput,panelButton;
+	private JPanel panelBottom,panelInput,panelButton,panelTop;
 	private JButton buttonUpdate,buttonDelete;
-
-	
+	private JMenuBar menuBar;
+	private JMenu cart,product;
 	
 	private void getTableData() {
 		List<CartItem> carts = CartHandler.getInstance().getCart();
@@ -56,7 +60,24 @@ public class CartManagementForm extends JFrame implements ActionListener{
 	private void initiate() {
 		// TODO Auto-generated method stub
 		Object[] header = {"CartID","ProductID","Name","Quantity"};
+		menuBar = new JMenuBar();
+		cart = new JMenu("CartForm");
+		product = new JMenu("ProductForm");
+		product.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+				new ProductManagementForm();
+			}
+			
+		});
 		
+		menuBar.add(cart);
+		menuBar.add(product);
+//		add(menuBar);
+		panelTop = new JPanel(new BorderLayout());
 		dtm = new DefaultTableModel(header,0);
 		table = new JTable(dtm);
 		getTableData();
@@ -123,6 +144,7 @@ public class CartManagementForm extends JFrame implements ActionListener{
 		
 		panelButton = new JPanel(new GridBagLayout());
 		buttonUpdate = new JButton("Update");
+		buttonUpdate.addActionListener(this);
 		buttonDelete = new JButton("Delete");
 		GridBagConstraints buttonCons = new GridBagConstraints();
 		buttonCons.insets = new Insets(10,10,0,0);
@@ -138,7 +160,10 @@ public class CartManagementForm extends JFrame implements ActionListener{
 		
 		panelBottom.add(new JLabel("Update Cart"),BorderLayout.NORTH);
 		panelBottom.add(panelInput,BorderLayout.CENTER);
-		add(scrollPane);
+		
+		panelTop.add(menuBar,BorderLayout.NORTH);
+		panelTop.add(scrollPane,BorderLayout.CENTER);
+		add(panelTop);
 		add(panelBottom);
 	}
 	
@@ -148,18 +173,48 @@ public class CartManagementForm extends JFrame implements ActionListener{
 		setLayout(new GridLayout(2,1));
 		initiate();
 		setResizable(false);
-		setSize(700,600);
+		setSize(800, 600);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		setTitle("Cart Management Form");
 	}
-
+	
+	public CartManagementForm(Product product) {
+		// TODO Auto-generated constructor stub
+		setLayout(new GridLayout(2,1));
+		initiate();
+		
+//		labelIDVal.setText(product);
+		labelProductVal.setText(product.getProductID()+"");
+		labelNameVal.setText(product.getName());
+//		fieldQuantity.setText(p+"");
+		setResizable(false);
+		setSize(800, 600);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);;
+		setLocationRelativeTo(null);
+		setVisible(true);
+		setTitle("Cart Management Form");
+	}
+	
+	private void removeComponent() {
+		this.removeAll();
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getSource() == buttonUpdate) {
+			
+			
+			CartItem item = CartHandler.getInstance().addToCart(labelProductVal.getText(), fieldQuantity.getText());
+			if(item != null) {
+				getTableData();
+				JOptionPane.showMessageDialog(this, CartHandler.getInstance().getErrorMsg());
+			}else {
+				JOptionPane.showMessageDialog(this, CartHandler.getInstance().getErrorMsg());
+			}
+			
 			//update data
 		}else if(e.getSource() == buttonDelete) {
 			//delete data
