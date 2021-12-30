@@ -58,12 +58,14 @@ public class CartItem {
 		this.id = id;
 	}
 	
+
+	
 	public boolean updateCartItem(int id,int quantity) {
-		this.quantity+=quantity;
+		this.quantity=quantity;
 		String query = String.format("UPDATE %s SET quantity = ? WHERE product_id = ?", this.table);
 		PreparedStatement ps = db.prepareStatement(query);
 		try {
-			ps.setInt(1, this.quantity);
+			ps.setInt(1, quantity);
 			ps.setInt(2, id);
 			System.out.println("quantity");
 			return ps.executeUpdate()==1;

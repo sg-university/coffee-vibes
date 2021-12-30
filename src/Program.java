@@ -5,6 +5,7 @@ import controllers.ProductHandler;
 import models.Employee;
 import views.EmployeeManagementForm;
 import views.ProductManagementForm;
+import views.TransactionCheckoutForm;
 
 public class Program {
 
@@ -13,7 +14,8 @@ public class Program {
 //		CartHandler.getInstance().viewCartManagementForm();
 		Employee employee = new Employee();
 		AuthHandler.getInstance().setEmployee(employee.getEmployee("username1"));
-		new ProductManagementForm();
+//		new ProductManagementForm();
+		new TransactionCheckoutForm();
 //		new EmployeeManagementForm();
 //		ProductHandler.getInstance().viewProductManagementForm();
 		

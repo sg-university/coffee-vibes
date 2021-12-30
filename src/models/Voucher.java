@@ -1,6 +1,10 @@
 package models;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.Format;
 import java.util.List;
+import java.util.Vector;
 
 import connect.Database;
 
@@ -20,10 +24,41 @@ public class Voucher {
 		return null;
 	}
 	
-	public List<Voucher> getAllVouchers(){
+	public Voucher(Integer voucherID, Integer discount, String status) {
+		super();
+		this.voucherID = voucherID;
+		this.discount = discount;
+		this.status = status;
+	}
+
+	private Voucher map(ResultSet rs) {
 		
-		
+		try {
+			int id = rs.getInt(1);
+			String status = rs.getString(2);
+			int discount = rs.getInt(3);
+			return new Voucher(id, discount, status);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
+	}
+	public List<Voucher> getAllVouchers(){
+		String query = String.format("SELECT * FROM %s", this.table);
+		ResultSet rs = db.executeQuery(query);
+		Vector<Voucher> listVoucher = new Vector<Voucher>();
+		try {
+			while(rs.next()) {
+				listVoucher.add(map(rs));
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return listVoucher;
 	}
 	
 	public Voucher getVoucher(Integer voucherID) {

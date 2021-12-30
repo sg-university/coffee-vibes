@@ -23,8 +23,10 @@ public class VoucherHandler {
 	}
 	
 	public List<Voucher> getAllVouchers(){
+		Voucher voucher = new Voucher();
+		List<Voucher> listVoucher = voucher.getAllVouchers();
 		
-		return null;
+		return listVoucher;
 	}
 
 	public Voucher insertVoucher(Integer discount) {

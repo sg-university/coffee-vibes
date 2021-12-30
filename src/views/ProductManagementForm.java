@@ -36,7 +36,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 	private JPanel PNLtop, PNLcenter, PNLbottom;
 	private JTextField nameText, descText, priceText, stockText,idText;
 	private JLabel nameLBL, descLBL, priceLBL, stockLBL,idLBL;
-	private JButton insertBut, updateBut, deleteBut,addCartBut;
+	private JButton insertBut, updateBut, deleteBut,addCartBut,goToCartBut;
 	private JTable TBLproduct;
 	private DefaultTableModel dtm;
 	private List<Product> products;
@@ -84,7 +84,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		stockText = new JTextField();
 		idText = new JTextField();
 		
-		PNLcenter = new JPanel(new GridLayout(4, 1));
+		PNLcenter = new JPanel(new GridLayout(3, 1));
 		PNLcenter.add(new JScrollPane(TBLproduct));
 		PNLcenter.add(PNLcenterBottom);
 
@@ -125,16 +125,20 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 				PNLbottom.add(insertBut);
 				PNLbottom.add(updateBut);
 				PNLbottom.add(deleteBut);
-			}else {
+			}else if(employee.getPosition().equals("barista")){
 				nameText.setEditable(false);
 				idText.setEditable(false);
 				descText.setEditable(false);
 				priceText.setEditable(false);
 				stockText.setEditable(false);
 				initTable();
-				PNLcenterBottom.add(new JLabel("Choose Product Name:"));
+				PNLcenterBottom.add(new JLabel("Choose Coffee ID To Adding To Cart:"));
 				PNLcenterBottom.add(nameCombo);
+				goToCartBut = new JButton("Go To Cart >>");
+				goToCartBut.addActionListener(this);
+				
 				PNLbottom.add(addCartBut);
+				PNLbottom.add(goToCartBut);
 			}
 		}
 		
@@ -170,9 +174,11 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		add(PNLtop, BorderLayout.NORTH);
 		add(PNLcenter, BorderLayout.CENTER);
 		add(PNLbottom, BorderLayout.SOUTH);
+		add(new JPanel(),BorderLayout.WEST);
+		add(new JPanel(),BorderLayout.EAST);
 		initTable();
 		setSize(800, 600);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setVisible(true);
@@ -195,6 +201,8 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 			Product product = ProductHandler.getInstance().getProduct(productID);
 			CartHandler.getInstance().viewCartManagementForm(product);
 
+		}else if(arg0.getSource() == goToCartBut) {
+			CartHandler.getInstance().viewCartManagementForm();
 		}
 
 	}
