@@ -3,6 +3,7 @@ package views;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -108,9 +109,10 @@ public class EmployeeManagementForm extends JFrame implements ActionListener, Mo
 		add(PNLtop, BorderLayout.NORTH);
 		add(PNLcenter, BorderLayout.CENTER);
 		add(PNLbottom, BorderLayout.SOUTH);
-
+		add(new JPanel(),BorderLayout.WEST);
+		add(new JPanel(),BorderLayout.EAST);
 		setSize(800, 600);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
 
 		setVisible(true);

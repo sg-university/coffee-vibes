@@ -29,6 +29,10 @@ public class CartHandler {
 	public CartItem addToCart(String productID, String quantity) {
 		int id = 0;
 		int qty = 0;
+		if(quantity.equals("") == true) {
+			errorMsg = "Quantity field must be fill!";
+			return null;
+		}
 		try {
 			int temp = Integer.parseInt(productID);
 			id = temp;
@@ -62,23 +66,19 @@ public class CartHandler {
 		
 		for (CartItem cartItem : listItem) {
 			if(cartItem.getProduct().getProductID() == id) {
-				
-				if(cartItem.updateCartItem(id, qty)) {
-					errorMsg = "Item already in cart, Update Success!";
-					getCart();
-					return cartItem;
-				}
-				
-				errorMsg = "Item already in cart, Update Failed!";
+				cartItem.setQuantity(qty);
+				errorMsg = "Item already in cart, Update Success!";
+
 				return cartItem;
 			}
 		}
 		
 		CartItem cart = new CartItem(item, qty, id);
-		if(cart.insertNewCartItem() == null) {
-			errorMsg = "Insert Failed!";
-			return null;
-		}
+//		if(cart.insertNewCartItem() == null) {
+//			errorMsg = "Insert Failed!";
+//			return null;
+//		}
+		listItem.add(cart);
 		errorMsg = "Insert Success!";
 		return cart;
 	}
@@ -100,14 +100,14 @@ public class CartHandler {
 	}
 	
 	public List<CartItem> getCart(){
-		listItem = cartItem.getAllCartItems();
+//		listItem = cartItem.getAllCartItems();
 		if(listItem != null) {
 			return listItem;
 		}else {
 			listItem = new Vector<CartItem>();
 			errorMsg = "There is no CartItem";
 		}
-		return null;
+		return listItem;
 	}
 	
 	public Product getProduct(Integer productID) {
@@ -125,8 +125,18 @@ public class CartHandler {
 		return null;
 	}
 	
-	public boolean removeProductFromCart(Integer productID) {
+	public boolean removeProductFromCart(String productID) {
+		int id = Integer.parseInt(productID);
+
 		
+		for(int i = 0; i < listItem.size();i++) {
+			if(listItem.get(i).getId() == id) {
+				listItem.remove(i);
+				errorMsg = "Delete Success!";
+				return true;
+			}
+		}
+		errorMsg = "Delete Failed, Item was not found!";
 		return false;
 	}
 	

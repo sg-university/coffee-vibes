@@ -58,6 +58,8 @@ public class CartItem {
 		this.id = id;
 	}
 	
+
+	
 	public boolean updateCartItem(int id,int quantity) {
 		this.quantity=quantity;
 		String query = String.format("UPDATE %s SET quantity = ? WHERE product_id = ?", this.table);
