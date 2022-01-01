@@ -210,8 +210,6 @@ public class CartManagementForm extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getSource() == buttonUpdate) {
-			
-			
 			CartItem item = CartHandler.getInstance().addToCart(labelProductVal.getText(), fieldQuantity.getText());
 			if(item != null) {
 				getTableData();

@@ -28,14 +28,39 @@ public class Product {
 		this.price = price;
 		this.stock = stock;
 	}
+	
+	
+
+	public Product(String name, String description, Integer price, Integer stock) {
+		super();
+		this.name = name;
+		this.description = description;
+		this.price = price;
+		this.stock = stock;
+	}
 
 	public Product insertNewProduct() {
+		String query = String.format("INSERT INTO %s (name,description,price,stock) VALUES(?, ?, ?, ?)", this.table);
+		PreparedStatement ps = db.prepareStatement(query);
+		try {
+			ps.setString(1, this.name);
+			ps.setString(2, this.description);
+			ps.setInt(3, this.price);
+			ps.setInt(4, this.stock);
+			ps.execute();
+			return this;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		
 		return null;
 	}
 	
 	public List<Product> getAllProduct(){
-		String query = String.format("SELECT * FROM %s WHERE stock > 0", this.table);
+		String query = String.format("SELECT * FROM %s", this.table);
 		
 		ResultSet rs = db.executeQuery(query);
 		Vector<Product> products = new Vector<Product>();
