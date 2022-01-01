@@ -21,7 +21,7 @@ public class Program {
 		CartHandler.getInstance().getCart().add(new CartItem(product.getProduct(2), 2, 1));
 		CartHandler.getInstance().getCart().add(new CartItem(product.getProduct(3), 3, 3));
 		Employee employee = new Employee();
-		AuthHandler.getInstance().setEmployee(employee.getEmployee("username1"));
+		AuthHandler.getInstance().setEmployee(employee.getEmployee("username3"));
 //		Transaction ts = new Transaction();
 //		Transaction temp = ts.insertTransaction(AuthHandler.getInstance().getEmployee().getEmployeeID(), 10000);
 //		

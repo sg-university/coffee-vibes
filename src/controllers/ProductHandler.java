@@ -27,9 +27,44 @@ public class ProductHandler {
 		new ProductManagementForm();
 	}
 	
-	public Product insertProduct(String name,String description,Integer Price, Integer stock) {
+	public Product insertProduct(String name,String description,String price, String stock) {
+		int tempPrice = 0;
+		int tempStock = 0;
 		
-		return null;
+		
+		if(name.equals("")) {
+			errorMsg = "Name cannot be empty!";
+			return null;
+		}
+		
+		if(description.equals("")) {
+			errorMsg = "Description cannot be empty!";
+			return null;
+		}
+		
+		try {
+			tempStock = Integer.parseInt(stock);
+		} catch (Exception e) {
+			// TODO: handle exception
+			errorMsg = "Stock must be integer!";
+			return null;
+		}
+		try {
+			tempPrice = Integer.parseInt(price);
+		} catch (Exception e) {
+			// TODO: handle exception
+			errorMsg = "Price must be Integer!";
+			return null;
+		}
+		product = new Product(name, description, tempPrice, tempStock);
+		Product temp = product.insertNewProduct();
+		
+		if(temp == null) {
+			errorMsg = "Insert Failed!";
+			return null;
+		}
+		
+		return temp;
 	}
 	
 	public List<Product> getAllProducts(){

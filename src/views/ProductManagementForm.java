@@ -83,7 +83,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		priceText = new JTextField();
 		stockText = new JTextField();
 		idText = new JTextField();
-		
+		idText.setEditable(false);
 		PNLcenter = new JPanel(new GridLayout(3, 1));
 		PNLcenter.add(new JScrollPane(TBLproduct));
 		PNLcenter.add(PNLcenterBottom);
@@ -106,11 +106,11 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		insertBut = new JButton("Insert");
 		insertBut.addActionListener(this);
 
-		updateBut = new JButton("update");
+		updateBut = new JButton("Update");
 		updateBut.setBackground(Color.MAGENTA);
 		updateBut.addActionListener(this);
 
-		deleteBut = new JButton("delete");
+		deleteBut = new JButton("Delete");
 		deleteBut.setBackground(Color.MAGENTA);
 		deleteBut.addActionListener(this);
 		
@@ -190,7 +190,17 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		// TODO Auto-generated method stub
 
 		if (arg0.getSource() == insertBut) {
-			System.out.println("keklik insert button");
+			if(JOptionPane.showConfirmDialog(this,"Do you want to Insert?") == 0) {
+				Product p = ProductHandler.getInstance().insertProduct(nameText.getText(), descText.getText(), priceText.getText(), stockText.getText());
+				if(p == null) {
+					
+					JOptionPane.showMessageDialog(this, ProductHandler.getInstance().getErrorMsg());
+				}else {
+					JOptionPane.showMessageDialog(this, "Insert Product Success!");
+					initTable();
+				}
+			}
+			
 		} else if (arg0.getSource() == updateBut) {
 			System.out.println("keklik update button");
 		} else if (arg0.getSource() == deleteBut) {
