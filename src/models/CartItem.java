@@ -20,6 +20,11 @@ public class CartItem {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	public String toString() {
+		return "CartItem [id=" + id + ", product=" + product + ", quantity=" + quantity + "]";
+	}
+
 	private CartItem map(ResultSet rs) {
 		try {
 			Integer id = rs.getInt("id");
@@ -57,26 +62,22 @@ public class CartItem {
 		this.quantity = quantity;
 		this.id = id;
 	}
-	
 
-	
-	public boolean updateCartItem(int id,int quantity) {
-		this.quantity=quantity;
+	public boolean updateCartItem(Integer id, Integer quantity) {
+		this.quantity = quantity;
 		String query = String.format("UPDATE %s SET quantity = ? WHERE product_id = ?", this.table);
 		PreparedStatement ps = db.prepareStatement(query);
 		try {
 			ps.setInt(1, quantity);
 			ps.setInt(2, id);
 			System.out.println("quantity");
-			return ps.executeUpdate()==1;
+			return ps.executeUpdate() == 1;
 		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
-		
 		return false;
 	}
-	
+
 	public CartItem insertNewCartItem() {
 		String query = String.format("INSERT INTO %s (product_id,quantity) VALUES (?, ?)", this.table);
 		PreparedStatement ps = db.prepareStatement(query);
@@ -88,13 +89,12 @@ public class CartItem {
 				return this;
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
 	public Integer getId() {
 		return id;
 	}

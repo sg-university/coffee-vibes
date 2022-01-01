@@ -26,11 +26,27 @@ public class EmployeeHandler {
 
 	}
 
+	public String getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(String statusCode) {
+		this.statusCode = statusCode;
+	}
+
+	public String getStatusMessage() {
+		return statusMessage;
+	}
+
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
+	}
+
 	public Employee insertEmployee(String name, String position, Integer salary, String username, String password) {
 		EmployeePosition employeePosition = new EmployeePosition();
 		List<Employee> employeeList = this.getAllEmployees();
 		List<EmployeePosition> employeePositionList = employeePosition.getAllEmployeePosition();
-		
+
 		Boolean isPositionAvailable = employeePositionList.parallelStream()
 				.anyMatch(x -> x.getEmployeePositionName().equals(position));
 		if (!isPositionAvailable) {
@@ -92,7 +108,7 @@ public class EmployeeHandler {
 		return gotEmploye;
 	}
 
-	public Employee updateEmployee(Integer employeeID, String position, String name, Integer salary, String username,
+	public Employee updateEmployee(Integer employeeID, String name, String position, Integer salary, String username,
 			String password) {
 		EmployeePosition employeePosition = new EmployeePosition();
 		List<Employee> employeeList = this.getAllEmployees();
@@ -115,7 +131,7 @@ public class EmployeeHandler {
 
 		Integer employeePositionID = employeePositionList.parallelStream()
 				.filter(x -> x.getEmployeePositionName().equals(position)).findAny().get().getEmployeePositionID();
-		Employee employee = new Employee(salary, employeePositionID, name, position, salary, username, password);
+		Employee employee = new Employee(employeeID, employeePositionID, name, position, salary, username, password);
 		Employee updatedEmployee = employee.updateEmployee();
 		if (updatedEmployee == null) {
 			this.statusCode = "error";
@@ -147,7 +163,5 @@ public class EmployeeHandler {
 
 		return deletedEmploye;
 	}
-
-
 
 }

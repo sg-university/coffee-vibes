@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import connect.*;
 
-
 public class Employee {
 	private Integer employeeID;
 	private Integer positionID;
@@ -39,7 +38,7 @@ public class Employee {
 	public String toString() {
 		return "Employee [employeeID=" + employeeID + ", positionID=" + positionID + ", name=" + name + ", status="
 				+ status + ", salary=" + salary + ", username=" + username + ", password=" + password + ", table="
-				+ table + ", db=" + db + "]";
+				+ table + "]";
 	}
 
 	private Employee map(ResultSet rs) {
@@ -78,19 +77,28 @@ public class Employee {
 	}
 
 	public Employee insertEmployee() {
-		String sql = String.format("insert into %s values (?, ?, ?, ?, ?, ?, ?)", this.table);
+		String sql = String.format(
+				"insert into %s(position_id, name, status, salary, username, password) values (?, ?, ?, ?, ?, ?)",
+				this.table);
+		String sql2 = "select last_insert_id()";
 		PreparedStatement ps = this.db.prepareStatement(sql);
 		try {
-			ps.setInt(1, this.employeeID);
-			ps.setInt(2, this.positionID);
-			ps.setString(3, this.name);
-			ps.setString(4, this.status);
-			ps.setInt(5, this.salary);
-			ps.setString(6, this.username);
-			ps.setString(7, this.password);
+			ps.setInt(1, this.positionID);
+			ps.setString(2, this.name);
+			ps.setString(3, this.status);
+			ps.setInt(4, this.salary);
+			ps.setString(5, this.username);
+			ps.setString(6, this.password);
 			ps.execute();
 			if (ps.getUpdateCount() != 0) {
-				return this;
+				ps = this.db.prepareStatement(sql2);
+				ps.execute();
+				ResultSet rs = ps.getResultSet();
+				while (rs.next()) {
+					Integer id = rs.getInt(1);
+					this.setEmployeeID(id);
+					return this;
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
