@@ -11,6 +11,17 @@ public class TransactionItem {
 	public TransactionItem() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+
+	public TransactionItem(Integer transactionID, Integer productID, Integer quantity) {
+		super();
+		this.transactionID = transactionID;
+		this.productID = productID;
+		this.quantity = quantity;
+	}
+
+
 
 	public Integer getTransactionID() {
 		return transactionID;

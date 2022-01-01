@@ -81,7 +81,20 @@ public class Product {
 	}
 	
 	public Product updateProduct() {
-		
+		String query = String.format("UPDATE %s SET name = ?,description = ?,price = ?,stock = ? WHERE id = ?",this.table);
+		PreparedStatement ps = db.prepareStatement(query);
+		try {
+			ps.setString(1,this.name);
+			ps.setString(2, this.description);
+			ps.setInt(3, this.price);
+			ps.setInt(4, this.stock);
+			ps.setInt(5, this.productID);
+			ps.execute();
+			return this;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
