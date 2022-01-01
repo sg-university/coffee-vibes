@@ -42,6 +42,7 @@ public class ProductHandler {
 	}
 	
 	public Product getProduct(Integer productID) {
+		product = new Product();
 		product = product.getProduct(productID);
 		if(product != null) {
 			return product;
@@ -58,6 +59,14 @@ public class ProductHandler {
 	}
 	
 	public Product updateProductStock(Integer productID, Integer stock) {
+		product = new Product();
+		product = product.getProduct(productID);
+		
+		if(product != null) {
+			product.setStock(stock);
+			product.updateProduct();
+			return product;
+		}
 		
 		return null;
 	}

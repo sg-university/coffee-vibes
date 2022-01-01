@@ -14,7 +14,7 @@ public class Database {
 	private final String database = "coffee_vibes";
 	private final String host = "localhost:3306";
 	private final String url = String.format("jdbc:mysql://%s/%s", host, database);
-
+	
 	private Connection connection;
 	private Statement statement;
 	public static Database instance;
@@ -35,7 +35,7 @@ public class Database {
 			instance = new Database();
 		return instance;
 	}
-
+	
 	public ResultSet executeQuery(String sql) {
 		ResultSet resultSet = null;
 		try {
@@ -45,7 +45,15 @@ public class Database {
 		}
 		return resultSet;
 	}
-
+	public PreparedStatement prepareStatementWithKey(String sql) {
+		PreparedStatement ps = null;
+		try {
+			ps = this.connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return ps;
+	}
 	public PreparedStatement prepareStatement(String sql) {
 		PreparedStatement preparedStatement = null;
 		try {

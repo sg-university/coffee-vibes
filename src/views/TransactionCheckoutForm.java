@@ -3,6 +3,10 @@ package views;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.Vector;
 
@@ -15,21 +19,27 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import controllers.AuthHandler;
 import controllers.CartHandler;
+import controllers.TransactionHandler;
 import controllers.VoucherHandler;
 import models.CartItem;
+import models.Transaction;
 import models.Voucher;
 
-public class TransactionCheckoutForm extends JFrame{
+public class TransactionCheckoutForm extends JFrame implements ActionListener,ItemListener{
 	private JTable table;
 	private DefaultTableModel dtm;
 	private JLabel labelTotal;
 	private JButton button;
 	private JComboBox<String> comboVoucher;
+	private int totalPrice;
 	private JPanel panelTop,panelCenter,panelBot,panelVoucher,panelButton;
 	private JScrollPane scrollTable;
+	private String voucherID;
 	public TransactionCheckoutForm() {
 		// TODO Auto-generated constructor stub
+		voucherID = "";
 		init();
 		setSize(800, 600);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -45,6 +55,7 @@ public class TransactionCheckoutForm extends JFrame{
 		comboVoucher = new JComboBox<String>();
 		List<Voucher> listVoucher = VoucherHandler.getInstance().getAllVouchers();
 		comboVoucher.addItem("");
+		comboVoucher.addItemListener(this);
 		for (Voucher voucher : listVoucher) {
 			comboVoucher.addItem(voucher.getVoucherID()+"");
 		}
@@ -53,7 +64,7 @@ public class TransactionCheckoutForm extends JFrame{
 	private void loadTable() {
 		Object[] columnNames = {"ProductID","ProductName","Price","Quantity"};
 		dtm = new DefaultTableModel(columnNames,0);
-		
+		totalPrice = 0;
 		List<CartItem> carts = CartHandler.getInstance().getCart();
 		for (CartItem cartItem : carts) {
 			Vector<Object> row = new Vector<Object>();
@@ -61,8 +72,8 @@ public class TransactionCheckoutForm extends JFrame{
 			row.add(cartItem.getProduct().getName());
 			row.add(cartItem.getProduct().getPrice());
 			row.add(cartItem.getQuantity());
-			
-			dtm.addColumn(row);
+			totalPrice+=(cartItem.getQuantity()*cartItem.getProduct().getPrice());
+			dtm.addRow(row);
 		}
 		table = new JTable(dtm);
 	}
@@ -81,11 +92,12 @@ public class TransactionCheckoutForm extends JFrame{
 		
 		panelBot = new JPanel(new GridLayout(1,3));
 		button = new JButton("Checkout");
+		button.addActionListener(this);
 		panelButton = new JPanel();
 		panelButton.add(button);
 		panelBot.add(panelButton);
 		
-		labelTotal = new JLabel("Total Price: ");
+		labelTotal = new JLabel("Total Price: "+totalPrice);
 		labelTotal.setFont(new Font("Arial",Font.PLAIN,30));
 		panelVoucher = new JPanel(new GridLayout(6,1));
 		
@@ -101,6 +113,21 @@ public class TransactionCheckoutForm extends JFrame{
 		add(new JPanel(),BorderLayout.WEST);
 		add(new JPanel(),BorderLayout.EAST);
 		add(panelBot,BorderLayout.SOUTH);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getSource() == button) {
+			TransactionHandler.getInstance().insertTransaction(voucherID, AuthHandler.getInstance().getEmployee().getEmployeeID(), totalPrice);
+//			System.out.println(voucherID);
+		}
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		// TODO Auto-generated method stub
+		voucherID = e.getItem().toString();
 	}
 	
 	
