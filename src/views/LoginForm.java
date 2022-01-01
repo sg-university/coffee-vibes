@@ -107,7 +107,7 @@ public class LoginForm extends JFrame implements ActionListener{
 				this.dispose();
 				ProductHandler.getInstance().viewProductManagementForm();
 			}else {
-				JOptionPane.showMessageDialog(this, AuthHandler.getInstance().getErrorMsg());
+				JOptionPane.showMessageDialog(this, AuthHandler.getInstance().getStatusMessage());
 			}
 		}
 	}

@@ -4,10 +4,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.Format;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import connect.Database;
+import utils.Rand;
 
 public class Voucher {
 	private Integer voucherID;
@@ -15,16 +17,17 @@ public class Voucher {
 	private String status;
 	private final String table = "voucher";
 	private Database db = Database.getInstance();
-	
+
 	public Voucher() {
 		// TODO Auto-generated constructor stub
 	}
 
 	public Voucher generateVoucher() {
-		
-		return null;
+		Integer discount = Rand.range(1, 100);
+		Voucher voucher = new Voucher(null, discount, "active");
+		return voucher.insert();
 	}
-	
+
 	public Voucher(Integer voucherID, Integer discount, String status) {
 		super();
 		this.voucherID = voucherID;
@@ -33,73 +36,95 @@ public class Voucher {
 	}
 
 	private Voucher map(ResultSet rs) {
-		
 		try {
-			int id = rs.getInt("id");
+			Integer id = rs.getInt("id");
 			String status = rs.getString("status");
-			int discount = rs.getInt("discount");
+			Integer discount = rs.getInt("discount");
 			return new Voucher(id, discount, status);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
-	public List<Voucher> getAllVouchers(){
-		String query = String.format("SELECT * FROM %s WHERE status='active'", this.table);
-		ResultSet rs = db.executeQuery(query);
-		Vector<Voucher> listVoucher = new Vector<Voucher>();
-		try {
-			while(rs.next()) {
-				listVoucher.add(map(rs));
-			}
 
+	public List<Voucher> getAllVouchers() {
+		String sql = String.format("SELECT * FROM %s", this.table);
+		try {
+			ResultSet rs = db.executeQuery(sql);
+			List<Voucher> listVoucher = new ArrayList<Voucher>();
+			while (rs.next()) {
+				Voucher voucher = this.map(rs);
+				listVoucher.add(voucher);
+			}
+			return listVoucher;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return listVoucher;
+		return null;
 	}
-	
+
 	public Voucher getVoucher(Integer voucherID) {
 		String query = String.format("SELECT * FROM %s WHERE id = ?", this.table);
 		PreparedStatement ps = db.prepareStatement(query);
-		Voucher vouch = null;
 		try {
 			ps.setInt(1, voucherID);
 			ps.execute();
-			if(ps.getUpdateCount() != 0) {
-				ResultSet rs = ps.getResultSet();
-				if(rs.next()) {
-					vouch = map(rs);
-				}
-				
+			ResultSet rs = ps.getResultSet();
+			while (rs.next()) {
+				Voucher voucher = this.map(rs);
+				return voucher;
 			}
-			
-//			return ;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return vouch;
+		return null;
 	}
-	
-	public boolean deleteVoucher(Integer voucherID) {
-		String query = String.format("UPDATE %s SET status=? WHERE id=?",this.table);
+
+	public Voucher insert() {
+		String query = String.format("insert into %s(discount, status) values (?, ?)", this.table);
 		PreparedStatement ps = db.prepareStatement(query);
 		try {
-			ps.setString(1, "inactive");
-			ps.setInt(2, voucherID);
-			return ps.executeUpdate() == 1;
-			
+			ps.setInt(1, this.discount);
+			ps.setString(2, this.status);
+			if (ps.executeUpdate() != 0) {
+				return this;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public boolean delete(Integer voucherID) {
+		String sql = String.format("delete from %s where WHERE id=?", this.table);
+		PreparedStatement ps = db.prepareStatement(sql);
+		try {
+			ps.setInt(1, voucherID);
+			if (ps.executeUpdate() != 0) {
+				return true;
+			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		return false;
 	}
-	
-	
+
+	public boolean update() {
+		String query = String.format("UPDATE %s SET discount=?, status=? WHERE id=?", this.table);
+		PreparedStatement ps = db.prepareStatement(query);
+		try {
+			ps.setInt(1, this.discount);
+			ps.setString(2, this.status);
+			ps.setInt(3, this.voucherID);
+			if (ps.executeUpdate() != 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	public Integer getVoucherID() {
 		return voucherID;
 	}

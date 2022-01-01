@@ -1,126 +1,208 @@
 package controllers;
 
 import java.util.List;
-import java.util.Vector;
 
 import models.Product;
+import utils.Validate;
 import views.ProductManagementForm;
 
 public class ProductHandler {
 	private static ProductHandler productHandler = null;
 	private Product product;
-	private String errorMsg;
+	private String statusMessage;
+	private String statusCode;
+
 	public static synchronized ProductHandler getInstance() {
-		if(productHandler == null) {
+		if (productHandler == null) {
 			productHandler = new ProductHandler();
 		}
-		
+
 		return productHandler;
 	}
+
 	private ProductHandler() {
-		// TODO Auto-generated constructor stub
 		product = new Product();
 	}
 
 	public void viewProductManagementForm() {
-		// TODO Auto-generated method stub
 		new ProductManagementForm();
 	}
-	
-	public Product insertProduct(String name,String description,String price, String stock) {
-		int tempPrice = 0;
-		int tempStock = 0;
-		
-		
-		if(name.equals("")) {
-			errorMsg = "Name cannot be empty!";
+
+	public Product insertProduct(String name, String description, String price, String stock) {
+		if (name.isEmpty()) {
+			this.statusCode = "failed";
+			this.statusMessage = "Name cannot be empty!";
 			return null;
 		}
-		
-		if(description.equals("")) {
-			errorMsg = "Description cannot be empty!";
+
+		if (description.isEmpty()) {
+			this.statusCode = "failed";
+			this.statusMessage = "Description cannot be empty!";
 			return null;
 		}
-		
-		try {
-			tempStock = Integer.parseInt(stock);
-		} catch (Exception e) {
-			// TODO: handle exception
-			errorMsg = "Stock must be integer!";
+
+		if (!Validate.isInteger(stock)) {
+			this.statusCode = "failed";
+			this.statusMessage = "Stock must be integer!";
 			return null;
 		}
-		try {
-			tempPrice = Integer.parseInt(price);
-		} catch (Exception e) {
-			// TODO: handle exception
-			errorMsg = "Price must be Integer!";
+
+		Boolean isStockMoreThanOrEqualToZero = Integer.parseInt(stock) >= 0;
+		if (!isStockMoreThanOrEqualToZero) {
+			this.statusCode = "failed";
+			this.statusMessage = "Stock must be more than or equal to zero!";
 			return null;
 		}
-		product = new Product(name, description, tempPrice, tempStock);
+
+		if (!Validate.isInteger(price)) {
+			this.statusCode = "failed";
+			this.statusMessage = "Price must be Integer!";
+			return null;
+		}
+
+		product = new Product(name, description, Integer.parseInt(price), Integer.parseInt(stock));
 		Product temp = product.insertNewProduct();
-		
-		if(temp == null) {
-			errorMsg = "Insert Failed!";
+
+		if (temp == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to insert product.";
 			return null;
 		}
-		
+
+		this.statusCode = "succeed";
+		this.statusMessage = "Succeed to insert product.";
+
 		return temp;
 	}
-	
-	public List<Product> getAllProducts(){
+
+	public List<Product> getAllProducts() {
 		List<Product> temp = product.getAllProduct();
-		if(temp == null) {
-			errorMsg = "There is no product!";
-			return new Vector<Product>();
+		if (temp == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to get all product.";
+			return null;
 		}
+
+		this.statusCode = "succeed";
+		this.statusMessage = "Succeed to get all product.";
 		return temp;
 	}
-	
+
 	public Product getProduct(Integer productID) {
 		product = new Product();
 		product = product.getProduct(productID);
-		if(product != null) {
-			return product;
-		}else {
-			product = new Product();
-			errorMsg = "Product Not Found";
+		if (product == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to get product by product id because product not found";
 		}
-		return null;
+		this.statusCode = "succeed";
+		this.statusMessage = "Succeed to get product by product id.";
+		return product;
 	}
-	
-	public Product updateProduct(Integer productID, String name, String description, Integer price) {
-		
-		return null;
-	}
-	
-	public Product updateProductStock(Integer productID, Integer stock) {
-		product = new Product();
-		product = product.getProduct(productID);
-		
-		if(product != null) {
-			product.setStock(stock);
-			product.updateProduct();
-			return product;
+
+	public Product updateProduct(Integer productID, String name, String description, String price) {
+		if (name.isEmpty()) {
+			this.statusCode = "failed";
+			this.statusMessage = "Name cannot be empty!";
+			return null;
 		}
-		
-		return null;
+
+		if (description.isEmpty()) {
+			this.statusCode = "failed";
+			this.statusMessage = "Description cannot be empty!";
+			return null;
+		}
+
+		if (!Validate.isInteger(price)) {
+			this.statusCode = "failed";
+			this.statusMessage = "Price must be Integer!";
+			return null;
+		}
+
+		Product product = this.getProduct(productID);
+		product.setName(name);
+		product.setDescription(description);
+		product.setPrice(Integer.parseInt(price));
+		product = product.updateProduct();
+
+		if (product == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to update product by product id.";
+			return null;
+		}
+
+		this.statusMessage = "Succeed to update product by product id.";
+		return product;
 	}
-	
-	public boolean deleteProduct(Integer productID) {
-		
-		return false;
+
+	public Product updateProductStock(Integer productID, String stock) {
+		Product product = this.getProduct(productID);
+
+		if (!Validate.isInteger(stock)) {
+			this.statusCode = "failed";
+			this.statusMessage = "Stock must be integer!";
+			return null;
+		}
+
+		Boolean isStockMoreThanOrEqualToZero = Integer.parseInt(stock) >= 0;
+		if (!isStockMoreThanOrEqualToZero) {
+			this.statusCode = "failed";
+			this.statusMessage = "Stock must be more than or equal to zero!";
+			return null;
+		}
+
+		product.setStock(Integer.parseInt(stock));
+		product = product.updateProduct();
+
+		if (product == null) {
+			this.statusCode = "failed ";
+			this.statusMessage = "Failed to update product stock by product id.";
+			return null;
+		}
+
+		this.statusCode = "succeed";
+		this.statusMessage = "Succeed to update product stock by product id.";
+		return product;
 	}
+
+	public Boolean deleteProduct(Integer productID) {
+		Product product = this.getProduct(productID);
+
+		Boolean result = product.deleteProduct();
+
+		if (result == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to delete product by product id.";
+		}
+
+		this.statusCode = "succeed";
+		this.statusMessage = "Succeed to delete product by product id.";
+
+		return result;
+	}
+
 	public Product getProduct() {
 		return product;
 	}
+
 	public void setProduct(Product product) {
 		this.product = product;
 	}
-	public String getErrorMsg() {
-		return errorMsg;
+
+	public String getStatusMessage() {
+		return statusMessage;
 	}
-	public void setErrorMsg(String errorMsg) {
-		this.errorMsg = errorMsg;
+
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
 	}
-	
+
+	public String getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(String statusCode) {
+		this.statusCode = statusCode;
+	}
+
 }

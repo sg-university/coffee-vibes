@@ -1,120 +1,157 @@
 package controllers;
 
 import java.util.List;
-import java.util.Vector;
 
 import models.CartItem;
-import models.Product;
 import models.Transaction;
 import models.TransactionItem;
 import models.Voucher;
+import utils.Validate;
 import views.TransactionCheckoutForm;
 
 public class TransactionHandler {
 	private static TransactionHandler transactionHandler = null;
-	private Transaction transaction;
-	private String errorMsg;
-	
-	public String getErrorMsg() {
-		return errorMsg;
+	private String statusMessage;
+	private String statusCode;
+
+	public String getStatusMessage() {
+		return statusMessage;
 	}
 
-
-
-	public void setErrorMsg(String errorMsg) {
-		this.errorMsg = errorMsg;
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
 	}
 
+	public String getStatusCode() {
+		return statusCode;
+	}
 
+	public void setStatusCode(String statusCode) {
+		this.statusCode = statusCode;
+	}
 
 	public static synchronized TransactionHandler getInstance() {
-		if(transactionHandler == null) {
+		if (transactionHandler == null) {
 			transactionHandler = new TransactionHandler();
 		}
-		
+
 		return transactionHandler;
 	}
-	
-	
-	
+
 	private TransactionHandler() {
-		transaction = new Transaction();
-		// TODO Auto-generated constructor stub
 	}
-	
-	
-	public List<Transaction> getAllTransactions(){
-		
-		return null;
+
+	public List<Transaction> getAllTransactions() {
+		Transaction transaction = new Transaction();
+		List<Transaction> transactionList = transaction.getAllTransactions();
+
+		if (transactionList == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to get all transaction.";
+			return null;
+		}
+
+		this.statusCode = "succeed";
+		this.statusMessage = "Succeed to get all transaction.";
+
+		return transactionList;
 	}
-	
+
 	public Transaction getTransactionDetail(Integer transactionID) {
-		
-		return null;
+		Transaction transaction = new Transaction();
+		transaction = transaction.getTransactionDetail(transactionID);
+
+		if (transaction == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to get transaction detail.";
+			return null;
+		}
+
+		this.statusCode = "succeed";
+		this.statusMessage = "Succeed to get transaction detail.";
+
+		return transaction;
 	}
-	
-	public Transaction insertTransaction(String voucherID,Integer employeeID, Integer totalPayment) {
-		int vouchID = 0;
-		int empID = employeeID;
-		int total = 0;
-		Voucher vouch = new Voucher();
-		boolean useVouch = false;
-		if(!voucherID.equals("")) {
-			try {
-				vouchID = Integer.parseInt(voucherID);
-				
-				vouch = VoucherHandler.getInstance().getVoucher(vouchID);
-				System.out.println(vouchID);
-				if(vouch == null) {
-					errorMsg = "Voucher is not found!";
-					return null;
-				}
-				
-				boolean isUpdate = VoucherHandler.getInstance().deleteVoucher(vouchID);
-				System.out.println(vouchID);
-				if(!isUpdate) {
-					errorMsg = "Can't Use the Voucher!";
-					return null;
-				}
-				useVouch = true;
-				
-			} catch (Exception e) {
-				// TODO: handle exception
-				errorMsg = "Voucher ID can't be parsed to Integer!";
+
+	public Transaction insertTransaction(String voucherID, Integer employeeID, Integer totalPayment) {
+		Boolean isVoucherIdFilled = !voucherID.isEmpty();
+		Boolean isUsingVoucher = isVoucherIdFilled;
+		Voucher voucher = null;
+
+		if (isUsingVoucher) {
+			Boolean isVoucherIdInteger = Validate.isInteger(voucherID);
+			if (!isVoucherIdInteger) {
+				this.statusCode = "failed";
+				this.statusMessage = "Voucher id must be integer.";
+				return null;
+			}
+
+			VoucherHandler voucherHandler = VoucherHandler.getInstance();
+			voucher = voucherHandler.getVoucher(Integer.parseInt(voucherID));
+			if (voucher == null) {
+				statusMessage = "Voucher is not found!";
+				return null;
+			}
+
+			Boolean isVoucherActive = voucher.getStatus().equals("active");
+			if (!isVoucherActive) {
+				this.statusCode = "failed";
+				this.statusMessage = "Voucher must be active.";
+				return null;
+			}
+
+			voucher.setStatus("inactive");
+			Boolean isVoucherUpdated = voucher.update();
+			if (!isVoucherUpdated) {
+				statusMessage = "Failed to update the voucher to inactive!";
 				return null;
 			}
 		}
-		
-		Transaction temp = new Transaction();
-		if(useVouch) {
-			total = totalPayment - (totalPayment * vouch.getDiscount()/100);
-			temp = transaction.insertTransaction(vouchID, empID, total);
-		}else {
-			total = totalPayment;
-			temp = transaction.insertTransaction(empID, total);
-			//voucher id = 0 berarti tidak ada voucher;
+
+		Integer totalPrice = 0;
+		Transaction transaction = new Transaction();
+		if (isUsingVoucher) {
+			totalPrice = totalPayment - (totalPayment * voucher.getDiscount() / 100);
+			transaction.setVoucherID(Integer.parseInt(voucherID));
+			transaction.setEmployeeID(employeeID);
+			transaction.setTotalPrice(totalPrice);
+		} else {
+			totalPrice = totalPayment;
+			transaction.setEmployeeID(employeeID);
+			transaction.setTotalPrice(totalPrice);
 		}
-		
-		
-		
-		
-		List<CartItem> listCart = CartHandler.getInstance().getCart();
-		List<TransactionItem> listTransDetail = new Vector<TransactionItem>();
-		for (CartItem cartItem : listCart) {
-			int tempStock = cartItem.getProduct().getStock()-cartItem.getQuantity();
-			ProductHandler.getInstance().updateProductStock(cartItem.getProduct().getProductID(), tempStock);
-			TransactionItem item = new TransactionItem(temp.getTransactionID(),cartItem.getProduct().getProductID(),cartItem.getQuantity());
-			item.insertToDB();
+
+		transaction.insert();
+
+		CartHandler cartHandler = CartHandler.getInstance();
+		List<CartItem> cartItemList = cartHandler.getCart();
+		ProductHandler productHandler = ProductHandler.getInstance();
+		for (CartItem cartItem : cartItemList) {
+			Integer stock = cartItem.getProduct().getStock() - cartItem.getQuantity();
+			cartItem.setQuantity(stock);
+			productHandler.updateProductStock(cartItem.getProduct().getProductID(), String.valueOf(stock));
+
+			if (productHandler.getStatusCode().equals("failed")) {
+				this.setStatusCode(productHandler.getStatusCode());
+				this.setStatusMessage(productHandler.getStatusMessage());
+				return null;
+			}
+
+			TransactionItem transactionItem = new TransactionItem(transaction.getTransactionID(),
+					cartItem.getProduct().getProductID(), cartItem.getQuantity());
+			transactionItem.insert();
 		}
-		
-		CartHandler.getInstance().clearCart();
-//		temp.setListTransactionItem(new Vector<TransactionItem>());
-		errorMsg = "Checkout Success!";
-		return temp;
+
+		cartHandler.clearCart();
+		this.statusMessage = "Checkout success!";
+		this.statusCode = "succeed";
+		return transaction;
 	}
+
 	public void viewTransactionCheckout() {
 		new TransactionCheckoutForm();
 	}
+
 	public void viewTransactionManagement() {
 		// TODO Auto-generated method stub
 

@@ -6,19 +6,20 @@ import views.LoginForm;
 public class AuthHandler {
 	private static AuthHandler authHandler;
 	private Employee employee;
-	private String errorMsg;
+	private String statusCode;
+	private String statusMessage;
+
 	public static synchronized AuthHandler getInstance() {
-		if(authHandler == null)authHandler = new AuthHandler();
-		
+		if (authHandler == null)
+			authHandler = new AuthHandler();
+
 		return authHandler;
 	}
-	
+
 	private AuthHandler() {
-		// TODO Auto-generated constructor stub
 		employee = new Employee();
 	}
-	
-	
+
 	public Employee getEmployee() {
 		return employee;
 	}
@@ -27,27 +28,36 @@ public class AuthHandler {
 		this.employee = employee;
 	}
 
-	public String getErrorMsg() {
-		return errorMsg;
+	public String getStatusMessage() {
+		return statusMessage;
 	}
 
-	public void setErrorMsg(String errorMsg) {
-		this.errorMsg = errorMsg;
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
 	}
 
-	public boolean login(String username,String password) {
-		employee = employee.getEmployeeByLogin(username, password);
-		
-		if(employee != null) {
-			
-			return true;
-		}else {
-			employee = new Employee();
-			errorMsg = "Invalid Employee!";
+	public String getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(String statusCode) {
+		this.statusCode = statusCode;
+	}
+
+	public Boolean login(String username, String password) {
+		employee = employee.getEmployeeByCredentials(username, password);
+
+		if (employee == null) {
+			this.statusMessage = "Failed to login by employee credentials.";
+			this.statusCode = "failed";
+			return false;
 		}
-		
-		return false;
+
+		this.statusMessage = "Succeed to login by employee credentials.";
+		this.statusCode = "succeed";
+		return true;
 	}
+
 	public void viewLoginForm() {
 		new LoginForm();
 	}

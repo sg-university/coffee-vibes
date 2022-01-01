@@ -3,10 +3,10 @@ package controllers;
 import java.util.List;
 
 import models.Employee;
-import models.EmployeePosition;
+import models.Position;
 
 public class EmployeeHandler {
-	private static EmployeeHandler employeeHandler;
+	private static EmployeeHandler employeeHandler = null;
 	private String statusCode;
 	private String statusMessage;
 
@@ -43,52 +43,59 @@ public class EmployeeHandler {
 	}
 
 	public Employee insertEmployee(String name, String position, Integer salary, String username, String password) {
-		EmployeePosition employeePosition = new EmployeePosition();
+		Position positionModel = new Position();
 		List<Employee> employeeList = this.getAllEmployees();
-		List<EmployeePosition> employeePositionList = employeePosition.getAllEmployeePosition();
+		List<Position> positionList = positionModel.getAllPosition();
 
-		Boolean isPositionAvailable = employeePositionList.parallelStream()
-				.anyMatch(x -> x.getEmployeePositionName().equals(position));
+		Boolean isPositionAvailable = positionList.parallelStream().anyMatch(x -> x.gePositionName().equals(position));
 		if (!isPositionAvailable) {
-			this.statusCode = "error";
-			this.statusMessage = "Employee position must be available";
+			this.statusCode = "failed";
+			this.statusMessage = "Employee position must be available.";
+			return null;
+		}
+
+		Boolean isSalaryHigherThanOne = salary >= 1;
+		if (!isSalaryHigherThanOne) {
+			this.statusCode = "failed";
+			this.statusMessage = "Employee salary must be higher than or equal to 1.";
 			return null;
 		}
 
 		Boolean isUsernameUnique = !employeeList.parallelStream().anyMatch(x -> x.getUsername().equals(username));
 		if (!isUsernameUnique) {
-			this.statusCode = "error";
-			this.statusMessage = "Employee username must be unique";
+			this.statusCode = "failed";
+			this.statusMessage = "Employee username must be unique.";
 			return null;
 		}
 
-		Integer employeePositionID = employeePositionList.parallelStream()
-				.filter(x -> x.getEmployeePositionName().equals(position)).findAny().get().getEmployeePositionID();
-		Employee employee = new Employee(salary, employeePositionID, name, position, salary, username, password);
-		Employee createdEmployee = employee.insertEmployee();
-		if (createdEmployee == null) {
-			this.statusCode = "error";
-			this.statusMessage = "Failed to insert employee";
+		Integer positionID = positionList.parallelStream().filter(x -> x.gePositionName().equals(position)).findAny()
+				.get().getPositionID();
+		Employee employee = new Employee(salary, positionID, name, salary, username, password);
+		Employee insertedEmployee = employee.insertEmployee();
+		if (insertedEmployee == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to insert employee.";
 			return null;
 		}
 
-		this.statusCode = "success";
-		this.statusMessage = "Succeed to insert employee";
+		this.statusCode = "succeed";
+		this.statusMessage = "Succeed to insert employee.";
 
-		return createdEmployee;
+		return insertedEmployee;
 	}
 
 	public List<Employee> getAllEmployees() {
 		Employee employee = new Employee();
 		List<Employee> employeeList = employee.getAllEmployees();
 
-		if (employeeList != null) {
-			this.statusCode = "success";
-			this.statusMessage = "Succeed to get all employee";
-		} else {
-			this.statusCode = "error";
-			this.statusMessage = "Failed to get all employee";
+		if (employeeList == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to get all employee.";
+			return null;
 		}
+
+		this.statusCode = "succeed";
+		this.statusMessage = "Succeed to get all employee.";
 
 		return employeeList;
 	}
@@ -97,71 +104,89 @@ public class EmployeeHandler {
 		Employee employee = new Employee();
 		Employee gotEmploye = employee.getEmployee(username);
 
-		if (gotEmploye != null) {
-			this.statusCode = "success";
-			this.statusMessage = "Succeed to get one employee by username";
-		} else {
-			this.statusCode = "error";
-			this.statusMessage = "Failed to get one employee by username";
+		if (gotEmploye == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to get one employee by username.";
+			return null;
 		}
+
+		this.statusCode = "succeed";
+		this.statusMessage = "Succeed to get one employee by username.";
 
 		return gotEmploye;
 	}
 
 	public Employee updateEmployee(Integer employeeID, String name, String position, Integer salary, String username,
 			String password) {
-		EmployeePosition employeePosition = new EmployeePosition();
+		Position positionModel = new Position();
 		List<Employee> employeeList = this.getAllEmployees();
-		List<EmployeePosition> employeePositionList = employeePosition.getAllEmployeePosition();
+		List<Position> positionList = positionModel.getAllPosition();
 
-		Boolean isPositionAvailable = employeePositionList.parallelStream()
-				.anyMatch(x -> x.getEmployeePositionName().equals(position));
+		Boolean isPositionAvailable = positionList.parallelStream().anyMatch(x -> x.gePositionName().equals(position));
 		if (!isPositionAvailable) {
-			this.statusCode = "error";
-			this.statusMessage = "Employee position must be available";
+			this.statusCode = "failed";
+			this.statusMessage = "Employee position must be available.";
+			return null;
+		}
+
+		Boolean isSalaryHigherThanOne = salary >= 1;
+		if (!isSalaryHigherThanOne) {
+			this.statusCode = "failed";
+			this.statusMessage = "Employee salary must be higher than or equal to 1.";
 			return null;
 		}
 
 		Boolean isUsernameUnique = !employeeList.parallelStream().anyMatch(x -> x.getUsername().equals(username));
 		if (!isUsernameUnique) {
-			this.statusCode = "error";
-			this.statusMessage = "Employee username must be unique";
+			this.statusCode = "failed";
+			this.statusMessage = "Employee username must be unique.";
 			return null;
 		}
 
-		Integer employeePositionID = employeePositionList.parallelStream()
-				.filter(x -> x.getEmployeePositionName().equals(position)).findAny().get().getEmployeePositionID();
-		Employee employee = new Employee(employeeID, employeePositionID, name, position, salary, username, password);
+		Integer positionID = positionList.parallelStream().filter(x -> x.gePositionName().equals(position)).findAny()
+				.get().getPositionID();
+		Employee employee = new Employee(employeeID, positionID, name, salary, username, password);
 		Employee updatedEmployee = employee.updateEmployee();
 		if (updatedEmployee == null) {
-			this.statusCode = "error";
-			this.statusMessage = "Failed to update one employee by employee id";
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to update one employee by employee id.";
 			return null;
 		}
 
-		this.statusCode = "success";
-		this.statusMessage = "Succeed to update one employee by employee id";
+		this.statusCode = "succeed";
+		this.statusMessage = "Succeed to update one employee by employee id.";
 
 		return updatedEmployee;
 	}
 
-	public boolean deleteEmployee(Integer employeeID) {
-		return this.fireEmployee(employeeID);
-	}
-
-	public boolean fireEmployee(Integer employeeID) {
+	public Boolean deleteEmployee(Integer employeeID) {
 		Employee employee = new Employee();
 		Boolean deletedEmploye = employee.fireEmployee(employeeID);
 
-		if (deletedEmploye == true) {
-			this.statusCode = "success";
-			this.statusMessage = "Succeed to delete one employee by employee id";
+		if (deletedEmploye == false) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to delete one employee by employee id.";
 		} else {
-			this.statusCode = "error";
-			this.statusMessage = "Failed to delete one employee by employee id";
+			this.statusCode = "succeed";
+			this.statusMessage = "Succeed to delete one employee by employee id.";
 		}
 
 		return deletedEmploye;
+	}
+
+	public Boolean fireEmployee(Integer employeeID) {
+		Employee employee = new Employee();
+		Boolean deletedEmploye = employee.fireEmployee(employeeID);
+
+		if (deletedEmploye == false) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to fire one employee by employee id.";
+			return false;
+		}
+
+		this.statusCode = "succeed";
+		this.statusMessage = "Succeed to fire one employee by employee id.";
+		return true;
 	}
 
 }

@@ -213,10 +213,10 @@ public class CartManagementForm extends JFrame implements ActionListener{
 			CartItem item = CartHandler.getInstance().addToCart(labelProductVal.getText(), fieldQuantity.getText());
 			if(item != null) {
 				getTableData();
-				JOptionPane.showMessageDialog(this, CartHandler.getInstance().getErrorMsg());
+				JOptionPane.showMessageDialog(this, CartHandler.getInstance().getStatusMessage());
 				this.dispose();
 			}else {
-				JOptionPane.showMessageDialog(this, CartHandler.getInstance().getErrorMsg());
+				JOptionPane.showMessageDialog(this, CartHandler.getInstance().getStatusMessage());
 			}
 			
 			//update data
