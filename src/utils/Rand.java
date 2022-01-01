@@ -3,11 +3,11 @@ package utils;
 import java.util.Random;
 
 public class Rand {
-	public static int range(int bottom, int upper) {
+	public static Integer range(Integer bottom, Integer upper) {
 		Random rand = new Random(); // instance of random class
-		int upperbound = upper;
+		Integer upperbound = upper;
 		// generate random values from bottom-upper
-		int result = bottom + rand.nextInt(upperbound);
+		Integer result = bottom + rand.nextInt(upperbound);
 
 		return result;
 	}

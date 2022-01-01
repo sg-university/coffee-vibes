@@ -121,7 +121,7 @@ public class TransactionCheckoutForm extends JFrame implements ActionListener,It
 		// TODO Auto-generated method stub
 		if(e.getSource() == button) {
 			Transaction transaction = TransactionHandler.getInstance().insertTransaction(voucherID, AuthHandler.getInstance().getEmployee().getEmployeeID(), totalPrice);
-			JOptionPane.showMessageDialog(this, TransactionHandler.getInstance().getErrorMsg());
+			JOptionPane.showMessageDialog(this, TransactionHandler.getInstance().getStatusMessage());
 			loadTable();
 			this.dispose();
 			CartHandler.getInstance().viewCartManagementForm();

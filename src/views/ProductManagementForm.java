@@ -31,17 +31,18 @@ import models.CartItem;
 import models.Employee;
 import models.Product;
 
-public class ProductManagementForm extends JFrame implements ActionListener, MouseListener,ItemListener {
+public class ProductManagementForm extends JFrame implements ActionListener, MouseListener, ItemListener {
 
 	private JPanel PNLtop, PNLcenter, PNLbottom;
-	private JTextField nameText, descText, priceText, stockText,idText;
-	private JLabel nameLBL, descLBL, priceLBL, stockLBL,idLBL;
-	private JButton insertBut, updateBut, deleteBut,addCartBut,goToCartBut;
+	private JTextField nameText, descText, priceText, stockText, idText;
+	private JLabel nameLBL, descLBL, priceLBL, stockLBL, idLBL;
+	private JButton insertBut, updateBut, deleteBut, addCartBut, goToCartBut;
 	private JTable TBLproduct;
 	private DefaultTableModel dtm;
 	private List<Product> products;
 	private JComboBox<String> nameCombo;
 	private String itemChoice;
+
 	public ProductManagementForm() {
 		// TODO Auto-generated constructor stub
 
@@ -50,13 +51,11 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 	}
 
 	public void addComp() {
-		
+
 		PNLtop = new JPanel();
 
-		JLabel title = new JLabel("Welcome "+AuthHandler.getInstance().getEmployee().getName());
+		JLabel title = new JLabel("Welcome " + AuthHandler.getInstance().getEmployee().getName());
 		PNLtop.add(title);
-
-
 
 		GridLayout layout = new GridLayout(6, 2, 4, 4);
 
@@ -70,14 +69,12 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		TBLproduct.setFillsViewportHeight(true);
 		TBLproduct.addMouseListener(this);
 
-
 		idLBL = new JLabel("Coffee ID: ");
 		nameLBL = new JLabel("Nama Coffee: ");
 		descLBL = new JLabel("Description Coffee: ");
 		priceLBL = new JLabel("Price Coffee: ");
 		stockLBL = new JLabel("Stock Coffee: ");
 
-		
 		nameText = new JTextField();
 		descText = new JTextField();
 		priceText = new JTextField();
@@ -90,7 +87,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 
 		PNLcenterBottom.add(idLBL);
 		PNLcenterBottom.add(idText);
-		
+
 		PNLcenterBottom.add(nameLBL);
 		PNLcenterBottom.add(nameText);
 
@@ -113,19 +110,18 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		deleteBut = new JButton("Delete");
 		deleteBut.setBackground(Color.MAGENTA);
 		deleteBut.addActionListener(this);
-		
+
 		addCartBut = new JButton("Add To Cart");
 		addCartBut.addActionListener(this);
-		
-		
+
 		PNLbottom = new JPanel();
 		Employee employee = AuthHandler.getInstance().getEmployee();
-		if(employee != null) {
-			if(employee.getPosition().equals("product admin")) {
+		if (employee != null) {
+			if (employee.getPosition().equals("product admin")) {
 				PNLbottom.add(insertBut);
 				PNLbottom.add(updateBut);
 				PNLbottom.add(deleteBut);
-			}else if(employee.getPosition().equals("barista")){
+			} else if (employee.getPosition().equals("barista")) {
 				nameText.setEditable(false);
 				idText.setEditable(false);
 				descText.setEditable(false);
@@ -136,45 +132,44 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 				PNLcenterBottom.add(nameCombo);
 				goToCartBut = new JButton("Go To Cart >>");
 				goToCartBut.addActionListener(this);
-				
+
 				PNLbottom.add(addCartBut);
 				PNLbottom.add(goToCartBut);
 			}
 		}
-		
-		
+
 	}
-	
+
 	private void initTable() {
-		Object[] header = {"ID","Name","Description","Price","Stock"};
+		Object[] header = { "ID", "Name", "Description", "Price", "Stock" };
 		products = ProductHandler.getInstance().getAllProducts();
 		nameCombo = new JComboBox<String>();
 		nameCombo.addItemListener(this);
 		nameCombo.addActionListener(this);
 
-		dtm = new DefaultTableModel(header,0);
-		for (Product product:products) {
+		dtm = new DefaultTableModel(header, 0);
+		for (Product product : products) {
 			Vector<Object> row = new Vector<Object>();
-			
+
 			row.add(product.getProductID());
 			row.add(product.getName());
 			row.add(product.getDescription());
 			row.add(product.getPrice());
 			row.add(product.getStock());
-			nameCombo.addItem(product.getProductID()+"");
+			nameCombo.addItem(product.getProductID() + "");
 			dtm.addRow(row);
 		}
 		TBLproduct.setModel(dtm);
-		
+
 	}
-	
+
 	public void initFrame() {
-		
+
 		add(PNLtop, BorderLayout.NORTH);
 		add(PNLcenter, BorderLayout.CENTER);
 		add(PNLbottom, BorderLayout.SOUTH);
-		add(new JPanel(),BorderLayout.WEST);
-		add(new JPanel(),BorderLayout.EAST);
+		add(new JPanel(), BorderLayout.WEST);
+		add(new JPanel(), BorderLayout.EAST);
 		initTable();
 		setSize(800, 600);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -184,33 +179,32 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		setTitle("Product Management Form");
 	}
 
-
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 
 		if (arg0.getSource() == insertBut) {
-			if(JOptionPane.showConfirmDialog(this,"Do you want to Insert?") == 0) {
-				Product p = ProductHandler.getInstance().insertProduct(nameText.getText(), descText.getText(), priceText.getText(), stockText.getText());
-				if(p == null) {
-					
-					JOptionPane.showMessageDialog(this, ProductHandler.getInstance().getErrorMsg());
-				}else {
+			if (JOptionPane.showConfirmDialog(this, "Do you want to Insert?") == 0) {
+				Product p = ProductHandler.getInstance().insertProduct(nameText.getText(), descText.getText(),
+						priceText.getText(), stockText.getText());
+				if (p == null) {
+					JOptionPane.showMessageDialog(this, ProductHandler.getInstance().getStatusMessage());
+				} else {
 					JOptionPane.showMessageDialog(this, "Insert Product Success!");
 					initTable();
 				}
 			}
-			
+
 		} else if (arg0.getSource() == updateBut) {
 			System.out.println("keklik update button");
 		} else if (arg0.getSource() == deleteBut) {
 			System.out.println("keklik delete button");
-		}else if(arg0.getSource() == addCartBut) {
+		} else if (arg0.getSource() == addCartBut) {
 			int productID = Integer.parseInt(itemChoice);
 			Product product = ProductHandler.getInstance().getProduct(productID);
 			CartHandler.getInstance().viewCartManagementForm(product);
 
-		}else if(arg0.getSource() == goToCartBut) {
+		} else if (arg0.getSource() == goToCartBut) {
 			this.dispose();
 			CartHandler.getInstance().viewCartManagementForm();
 		}
@@ -220,20 +214,20 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 		int row = TBLproduct.getSelectedRow();
 		Integer id = (int) TBLproduct.getValueAt(row, 0);
-		
+
 		String name = (String) TBLproduct.getValueAt(row, 1);
 		String des = (String) TBLproduct.getValueAt(row, 2);
 		Integer price = (int) TBLproduct.getValueAt(row, 3);
 		Integer stock = (int) TBLproduct.getValueAt(row, 4);
-		idText.setText(id+"");
+		idText.setText(id + "");
 		nameText.setText(name);
 		descText.setText(des);
-		priceText.setText(price+"");
-		stockText.setText(stock+"");
-		
+		priceText.setText(price + "");
+		stockText.setText(stock + "");
+
 //		nameCombo.setSelectedItem(nameCombo.getItemAt(row));
 //		nameCombo.setSelectedIndex(row);
 		itemChoice = id + "";
@@ -266,12 +260,8 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		// TODO Auto-generated method stub		
+		// TODO Auto-generated method stub
 		itemChoice = e.getItem().toString();
 	}
-
-	
-
-	
 
 }

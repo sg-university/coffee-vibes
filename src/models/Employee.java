@@ -7,12 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import connect.*;
 
-
 public class Employee {
 	private Integer employeeID;
 	private Integer positionID;
 	private String name;
-	private String status;
 	private Integer salary;
 	private String username;
 	private String password;
@@ -23,13 +21,12 @@ public class Employee {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Employee(Integer employeeID, Integer positionID, String name, String status, Integer salary, String username,
+	public Employee(Integer employeeID, Integer positionID, String name, Integer salary, String username,
 			String password) {
 		super();
 		this.employeeID = employeeID;
 		this.positionID = positionID;
 		this.name = name;
-		this.status = status;
 		this.salary = salary;
 		this.username = username;
 		this.password = password;
@@ -37,9 +34,8 @@ public class Employee {
 
 	@Override
 	public String toString() {
-		return "Employee [employeeID=" + employeeID + ", positionID=" + positionID + ", name=" + name + ", status="
-				+ status + ", salary=" + salary + ", username=" + username + ", password=" + password + ", table="
-				+ table + ", db=" + db + "]";
+		return "Employee [employeeID=" + employeeID + ", positionID=" + positionID + ", name=" + name + ", salary="
+				+ salary + ", username=" + username + ", password=" + password + "]";
 	}
 
 	private Employee map(ResultSet rs) {
@@ -47,11 +43,10 @@ public class Employee {
 			Integer id = rs.getInt("id");
 			Integer positionId = rs.getInt("position_id");
 			String name = rs.getString("name");
-			String status = rs.getString("status");
 			Integer salary = rs.getInt("salary");
 			String username = rs.getString("username");
 			String password = rs.getString("password");
-			Employee employee = new Employee(id, positionId, name, status, salary, username, password);
+			Employee employee = new Employee(id, positionId, name, salary, username, password);
 			return employee;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -59,7 +54,7 @@ public class Employee {
 		return null;
 	}
 
-	public Employee getEmployeeByLogin(String username, String password) {
+	public Employee getEmployeeByCredentials(String username, String password) {
 		String sql = String.format("select * from %s where username = ? AND password = ?", this.table);
 		PreparedStatement ps = this.db.prepareStatement(sql);
 		try {
@@ -78,19 +73,26 @@ public class Employee {
 	}
 
 	public Employee insertEmployee() {
-		String sql = String.format("insert into %s values (?, ?, ?, ?, ?, ?, ?)", this.table);
+		String sql = String.format(
+				"insert into %s(position_id, name, salary, username, password) values (?, ?, ?, ?, ?)", this.table);
+		String sql2 = "select last_insert_id()";
 		PreparedStatement ps = this.db.prepareStatement(sql);
 		try {
-			ps.setInt(1, this.employeeID);
-			ps.setInt(2, this.positionID);
-			ps.setString(3, this.name);
-			ps.setString(4, this.status);
-			ps.setInt(5, this.salary);
-			ps.setString(6, this.username);
-			ps.setString(7, this.password);
+			ps.setInt(1, this.positionID);
+			ps.setString(2, this.name);
+			ps.setInt(3, this.salary);
+			ps.setString(4, this.username);
+			ps.setString(5, this.password);
 			ps.execute();
 			if (ps.getUpdateCount() != 0) {
-				return this;
+				ps = this.db.prepareStatement(sql2);
+				ps.execute();
+				ResultSet rs = ps.getResultSet();
+				while (rs.next()) {
+					Integer id = rs.getInt(1);
+					this.setEmployeeID(id);
+					return this;
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -138,17 +140,16 @@ public class Employee {
 
 	public Employee updateEmployee() {
 		String sql = String.format(
-				"UPDATE %s SET position_id = ?, name = ?, status = ?, salary = ?, username = ?, password = ? WHERE id = ?",
+				"UPDATE %s SET position_id = ?, name = ?, salary = ?, username = ?, password = ? WHERE id = ?",
 				this.table);
 		PreparedStatement ps = this.db.prepareStatement(sql);
 		try {
-			ps.setInt(7, this.employeeID);
+			ps.setInt(6, this.employeeID);
 			ps.setInt(1, this.positionID);
 			ps.setString(2, this.name);
-			ps.setString(3, this.status);
-			ps.setInt(4, this.salary);
-			ps.setString(5, this.username);
-			ps.setString(6, this.password);
+			ps.setInt(3, this.salary);
+			ps.setString(4, this.username);
+			ps.setString(5, this.password);
 			ps.execute();
 			if (ps.getUpdateCount() != 0) {
 				return this;
@@ -161,7 +162,7 @@ public class Employee {
 	}
 
 	public boolean fireEmployee(Integer employeeID) {
-		String sql = String.format("delete from employee WHERE id = ?", this.table);
+		String sql = String.format("delete from %s WHERE id = ?", this.table);
 		PreparedStatement ps = this.db.prepareStatement(sql);
 		try {
 			ps.setInt(1, employeeID);
@@ -177,9 +178,9 @@ public class Employee {
 	}
 
 	public String getPosition() {
-		EmployeePosition employeePosition = new EmployeePosition();
-		EmployeePosition gotEmployeePosition = employeePosition.getEmployeePositionByEmployeeID(this.employeeID);
-		return gotEmployeePosition.getEmployeePositionName();
+		Position position = new Position();
+		Position gotPosition = position.getPositionByEmployeeID(this.employeeID);
+		return gotPosition.gePositionName();
 	}
 
 	public Integer getEmployeeID() {
@@ -204,14 +205,6 @@ public class Employee {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public Integer getSalary() {
