@@ -35,7 +35,7 @@ public class Product {
 	}
 	
 	public List<Product> getAllProduct(){
-		String query = String.format("SELECT * FROM %s", this.table);
+		String query = String.format("SELECT * FROM %s WHERE stock > 0", this.table);
 		
 		ResultSet rs = db.executeQuery(query);
 		Vector<Product> products = new Vector<Product>();

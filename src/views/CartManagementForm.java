@@ -27,6 +27,8 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import controllers.CartHandler;
+import controllers.ProductHandler;
+import controllers.TransactionHandler;
 import models.CartItem;
 import models.Product;
 
@@ -37,7 +39,7 @@ public class CartManagementForm extends JFrame implements ActionListener{
 	private JTextField fieldQuantity;
 	private JScrollPane scrollPane;
 	private JPanel panelBottom,panelInput,panelButton,panelTop;
-	private JButton buttonUpdate,buttonDelete,buttonCheckout;
+	private JButton buttonUpdate,buttonDelete,buttonCheckout,buttonProduct;
 
 	
 	private void getTableData() {
@@ -135,6 +137,8 @@ public class CartManagementForm extends JFrame implements ActionListener{
 		
 		
 		panelButton = new JPanel(new GridBagLayout());
+		buttonProduct = new JButton("ProductForm");
+		buttonProduct.addActionListener(this);
 		buttonCheckout = new JButton("Checkout");
 		buttonCheckout.addActionListener(this);
 		buttonUpdate = new JButton("Update");
@@ -152,6 +156,9 @@ public class CartManagementForm extends JFrame implements ActionListener{
 		buttonCons.gridx = 2;
 		buttonCons.gridy = 0;
 		panelButton.add(buttonCheckout,buttonCons);
+		buttonCons.gridx = 3;
+		buttonCons.gridy = 0;
+		panelButton.add(buttonProduct,buttonCons);
 		cons.gridx = 1;
 		cons.gridy = 4;
 		panelInput.add(panelButton,cons);
@@ -197,9 +204,7 @@ public class CartManagementForm extends JFrame implements ActionListener{
 		setTitle("Cart Management Form");
 	}
 	
-	private void removeComponent() {
-		this.removeAll();
-	}
+
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -223,7 +228,7 @@ public class CartManagementForm extends JFrame implements ActionListener{
 				JOptionPane.showMessageDialog(this, "You need to choose items by clicking the row in the table first!");
 			}else {
 				if(JOptionPane.showConfirmDialog(this, "Are you sure want to delete this cart?") == 0) {
-					boolean isDelete = CartHandler.getInstance().removeProductFromCart(labelPriceVal.getText());
+					boolean isDelete = CartHandler.getInstance().removeProductFromCart(labelProductVal.getText());
 					if(isDelete) {
 						JOptionPane.showMessageDialog(this,"Delete Success!");
 						labelPriceVal.setText("-");
@@ -236,6 +241,12 @@ public class CartManagementForm extends JFrame implements ActionListener{
 				
 				
 			}
+		}else if(e.getSource() == buttonCheckout) {
+			this.dispose();
+			TransactionHandler.getInstance().viewTransactionCheckout();
+		}else if(e.getSource() == buttonProduct) {
+			this.dispose();
+			ProductHandler.getInstance().viewProductManagementForm();
 		}
 	}
 

@@ -151,8 +151,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		nameCombo = new JComboBox<String>();
 		nameCombo.addItemListener(this);
 		nameCombo.addActionListener(this);
-		
-		
+
 		dtm = new DefaultTableModel(header,0);
 		for (Product product:products) {
 			Vector<Object> row = new Vector<Object>();
@@ -202,6 +201,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 			CartHandler.getInstance().viewCartManagementForm(product);
 
 		}else if(arg0.getSource() == goToCartBut) {
+			this.dispose();
 			CartHandler.getInstance().viewCartManagementForm();
 		}
 
@@ -210,6 +210,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
+		
 		int row = TBLproduct.getSelectedRow();
 		Integer id = (int) TBLproduct.getValueAt(row, 0);
 		
@@ -222,6 +223,11 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		descText.setText(des);
 		priceText.setText(price+"");
 		stockText.setText(stock+"");
+		
+//		nameCombo.setSelectedItem(nameCombo.getItemAt(row));
+//		nameCombo.setSelectedIndex(row);
+		itemChoice = id + "";
+//		System.out.println(nameCombo.getSelectedItem());
 	}
 
 	@Override

@@ -1,12 +1,14 @@
 package controllers;
 
 import java.util.List;
+import java.util.Vector;
 
 import models.CartItem;
 import models.Product;
 import models.Transaction;
 import models.TransactionItem;
 import models.Voucher;
+import views.TransactionCheckoutForm;
 
 public class TransactionHandler {
 	private static TransactionHandler transactionHandler = null;
@@ -60,12 +62,16 @@ public class TransactionHandler {
 		if(!voucherID.equals("")) {
 			try {
 				vouchID = Integer.parseInt(voucherID);
+				
 				vouch = VoucherHandler.getInstance().getVoucher(vouchID);
+				System.out.println(vouchID);
 				if(vouch == null) {
 					errorMsg = "Voucher is not found!";
 					return null;
 				}
+				
 				boolean isUpdate = VoucherHandler.getInstance().deleteVoucher(vouchID);
+				System.out.println(vouchID);
 				if(!isUpdate) {
 					errorMsg = "Can't Use the Voucher!";
 					return null;
@@ -79,29 +85,36 @@ public class TransactionHandler {
 			}
 		}
 		
-		
+		Transaction temp = new Transaction();
 		if(useVouch) {
 			total = totalPayment - (totalPayment * vouch.getDiscount()/100);
+			temp = transaction.insertTransaction(vouchID, empID, total);
 		}else {
 			total = totalPayment;
-			vouchID = -1;
+			temp = transaction.insertTransaction(empID, total);
 			//voucher id = 0 berarti tidak ada voucher;
 		}
 		
-		Transaction temp = transaction.insertTransaction(vouchID, empID, total);
+		
 		
 		
 		List<CartItem> listCart = CartHandler.getInstance().getCart();
-
+		List<TransactionItem> listTransDetail = new Vector<TransactionItem>();
 		for (CartItem cartItem : listCart) {
 			int tempStock = cartItem.getProduct().getStock()-cartItem.getQuantity();
 			ProductHandler.getInstance().updateProductStock(cartItem.getProduct().getProductID(), tempStock);
 			TransactionItem item = new TransactionItem(temp.getTransactionID(),cartItem.getProduct().getProductID(),cartItem.getQuantity());
-			temp.getListTransactionItem().add(item);
+			item.insertToDB();
 		}
-		return null;
+		
+		CartHandler.getInstance().clearCart();
+//		temp.setListTransactionItem(new Vector<TransactionItem>());
+		errorMsg = "Checkout Success!";
+		return temp;
 	}
-	
+	public void viewTransactionCheckout() {
+		new TransactionCheckoutForm();
+	}
 	public void viewTransactionManagement() {
 		// TODO Auto-generated method stub
 
