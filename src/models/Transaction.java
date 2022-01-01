@@ -4,8 +4,10 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Vector;
 
 import connect.Database;
 
@@ -20,6 +22,8 @@ public class Transaction {
 	private Database db = Database.getInstance();
 	public Transaction() {
 		// TODO Auto-generated constructor stub
+		this.listTransactionItem = new Vector<TransactionItem>();
+		
 	}
 	
 	public Transaction(Integer transactionID, Date purchaseDate, Integer voucherID, Integer employeeID,
@@ -70,11 +74,41 @@ public class Transaction {
 		}
 		return 0;
 	}
+	
+	public Transaction insertTransaction(int employeeID,int totalPayment) {
+		String query = String.format("INSERT INTO %s (purchase_date,employee_id,total_price) VALUES(?, ?, ?)", this.table);
+		String query2 = String.format("SELECT * FROM %s WHERE id=?", this.table);
+		PreparedStatement ps = db.prepareStatement(query);
+		
+		try {
+			ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+			
+			ps.setInt(2, employeeID);
+			ps.setInt(3, totalPayment);
+			ps.execute();
+			if (ps.getUpdateCount() != 0) {
+			    int id = getLastInsertId();
+			    if(id != 0) {
+			    	ps = db.prepareStatement(query2);
+			    	ps.setInt(1, id);
+			    	ps.execute();
+			    	return map(ps.getResultSet());
+			    }
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// TODO: handle exception
+		}
+		return null;
+		
+	}
+	
 	public Transaction insertTransaction(int voucherID,int employeeID,int totalPayment) {
 //		Date date = new Date(new java.util.Date());
 		String query = String.format("INSERT INTO %s (purchase_date,voucher_id,employee_id,total_price) VALUES(?, ?, ?, ?)", this.table);
 		String query2 = String.format("SELECT * FROM %s WHERE id=?", this.table);
 		PreparedStatement ps = db.prepareStatement(query);
+		
 		try {
 			ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
 			ps.setInt(2, voucherID);

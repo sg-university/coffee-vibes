@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -75,13 +76,12 @@ public class TransactionCheckoutForm extends JFrame implements ActionListener,It
 			totalPrice+=(cartItem.getQuantity()*cartItem.getProduct().getPrice());
 			dtm.addRow(row);
 		}
-		table = new JTable(dtm);
+		table.setModel(dtm);
 	}
 
 	protected void init() {
 		// TODO Auto-generated method stub
-		
-		loadTable();
+		table = new JTable();
 		generateVoucher();
 		panelTop = new JPanel();
 		scrollTable = new JScrollPane(table);
@@ -89,17 +89,17 @@ public class TransactionCheckoutForm extends JFrame implements ActionListener,It
 		panelCenter = new JPanel(new GridLayout(3,1));
 		panelCenter.add(scrollTable);
 		
-		
 		panelBot = new JPanel(new GridLayout(1,3));
 		button = new JButton("Checkout");
 		button.addActionListener(this);
 		panelButton = new JPanel();
 		panelButton.add(button);
 		panelBot.add(panelButton);
-		
+		loadTable();
 		labelTotal = new JLabel("Total Price: "+totalPrice);
 		labelTotal.setFont(new Font("Arial",Font.PLAIN,30));
 		panelVoucher = new JPanel(new GridLayout(6,1));
+		
 		
 		panelCenter.add(panelVoucher);
 		panelVoucher.add(new JLabel("Input Voucher: "));
@@ -107,6 +107,7 @@ public class TransactionCheckoutForm extends JFrame implements ActionListener,It
 		panelVoucher.add(new JLabel(""));
 		panelVoucher.add(new JLabel(""));
 		panelVoucher.add(labelTotal);
+		
 		
 		add(panelTop,BorderLayout.NORTH);
 		add(panelCenter,BorderLayout.CENTER);
@@ -119,8 +120,12 @@ public class TransactionCheckoutForm extends JFrame implements ActionListener,It
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getSource() == button) {
-			TransactionHandler.getInstance().insertTransaction(voucherID, AuthHandler.getInstance().getEmployee().getEmployeeID(), totalPrice);
-//			System.out.println(voucherID);
+			Transaction transaction = TransactionHandler.getInstance().insertTransaction(voucherID, AuthHandler.getInstance().getEmployee().getEmployeeID(), totalPrice);
+			JOptionPane.showMessageDialog(this, TransactionHandler.getInstance().getErrorMsg());
+			loadTable();
+			this.dispose();
+			CartHandler.getInstance().viewCartManagementForm();
+			
 		}
 	}
 

@@ -35,9 +35,9 @@ public class Voucher {
 	private Voucher map(ResultSet rs) {
 		
 		try {
-			int id = rs.getInt(1);
-			String status = rs.getString(2);
-			int discount = rs.getInt(3);
+			int id = rs.getInt("id");
+			String status = rs.getString("status");
+			int discount = rs.getInt("discount");
 			return new Voucher(id, discount, status);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -46,7 +46,7 @@ public class Voucher {
 		return null;
 	}
 	public List<Voucher> getAllVouchers(){
-		String query = String.format("SELECT * FROM %s", this.table);
+		String query = String.format("SELECT * FROM %s WHERE status='active'", this.table);
 		ResultSet rs = db.executeQuery(query);
 		Vector<Voucher> listVoucher = new Vector<Voucher>();
 		try {
@@ -69,7 +69,14 @@ public class Voucher {
 		try {
 			ps.setInt(1, voucherID);
 			ps.execute();
-			vouch = map(ps.getResultSet());
+			if(ps.getUpdateCount() != 0) {
+				ResultSet rs = ps.getResultSet();
+				if(rs.next()) {
+					vouch = map(rs);
+				}
+				
+			}
+			
 //			return ;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

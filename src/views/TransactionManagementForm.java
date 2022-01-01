@@ -6,7 +6,7 @@ public class TransactionManagementForm extends JFrame{
 	
 	public TransactionManagementForm() {
 		// TODO Auto-generated constructor stub
-
+		
 
 		setSize(800, 600);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);

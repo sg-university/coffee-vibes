@@ -26,6 +26,14 @@ public class CartHandler {
 		cartItem = new CartItem();
 	}
 
+	public List<CartItem> getListItem() {
+		return listItem;
+	}
+
+	public void setListItem(List<CartItem> listItem) {
+		this.listItem = listItem;
+	}
+
 	public CartItem addToCart(String productID, String quantity) {
 		int id = 0;
 		int qty = 0;
@@ -130,7 +138,7 @@ public class CartHandler {
 
 		
 		for(int i = 0; i < listItem.size();i++) {
-			if(listItem.get(i).getId() == id) {
+			if(listItem.get(i).getProduct().getProductID() == id) {
 				listItem.remove(i);
 				errorMsg = "Delete Success!";
 				return true;
@@ -150,7 +158,7 @@ public class CartHandler {
 	}
 
 	public void clearCart() {
-		
+		this.listItem.clear();
 	}
 	
 }

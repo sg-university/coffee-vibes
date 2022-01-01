@@ -22,10 +22,17 @@ public class Program {
 		CartHandler.getInstance().getCart().add(new CartItem(product.getProduct(3), 3, 3));
 		Employee employee = new Employee();
 		AuthHandler.getInstance().setEmployee(employee.getEmployee("username1"));
-		Transaction ts = new Transaction();
-		Transaction temp = ts.insertTransaction(1, AuthHandler.getInstance().getEmployee().getEmployeeID(), 10000);
-		
-//		new ProductManagementForm();
+//		Transaction ts = new Transaction();
+//		Transaction temp = ts.insertTransaction(AuthHandler.getInstance().getEmployee().getEmployeeID(), 10000);
+//		
+//		if(temp != null) {
+//			System.out.println("Transaction ID: "+ temp.getTransactionID());
+//			System.out.println("Transaction employeeID: "+ temp.getEmployeeID());
+//			System.out.println("Transaction total: "+temp.getTotalPrice());
+//		}else {
+//			System.out.println("Transaction Null");
+//		}
+		new ProductManagementForm();
 //		new TransactionCheckoutForm();
 //		new EmployeeManagementForm();
 //		ProductHandler.getInstance().viewProductManagementForm();
