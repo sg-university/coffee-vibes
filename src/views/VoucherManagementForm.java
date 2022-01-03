@@ -31,17 +31,16 @@ import models.Employee;
 import models.Product;
 import models.Voucher;
 
-public class VoucherManagementForm extends JFrame implements ActionListener,ItemListener,MouseListener{
+public class VoucherManagementForm extends JFrame implements ActionListener,MouseListener{
 
 	private JPanel PNLtop, PNLcenter, PNLbottom;
 	private JTextField discountText, idText;
 	private JLabel discountLBL, idLBL;
-	private JButton insertBut, updateBut, deleteBut, addCartBut, goToCartBut,productBut;
+	private JButton insertBut, deleteBut, productBut;
 	private JTable TBLproduct;
 	private DefaultTableModel dtm;
 	private List<Voucher> vouchers;
-	private JComboBox<String> nameCombo;
-	private String itemChoice;
+
 
 	public VoucherManagementForm() {
 		// TODO Auto-generated constructor stub
@@ -91,10 +90,6 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Item
 		insertBut = new JButton("Insert");
 		insertBut.addActionListener(this);
 
-		updateBut = new JButton("Update");
-		updateBut.setBackground(Color.MAGENTA);
-		updateBut.addActionListener(this);
-
 		deleteBut = new JButton("Delete");
 		deleteBut.setBackground(Color.MAGENTA);
 		deleteBut.addActionListener(this);
@@ -106,7 +101,7 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Item
 		if (employee != null) {
 			if (employee.getPosition().equals("product admin")) {
 				PNLbottom.add(insertBut);
-				PNLbottom.add(updateBut);
+
 				PNLbottom.add(deleteBut);
 				PNLbottom.add(productBut);
 			}
@@ -160,10 +155,6 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Item
 				}
 			}
 
-		} else if (arg0.getSource() == updateBut) {
-			if(JOptionPane.showConfirmDialog(this, "Do you want to update this product?") == 0) {
-				
-			}
 		} else if (arg0.getSource() == deleteBut) {
 			if(JOptionPane.showConfirmDialog(this, "Are you sure want to delete this product?") == 0) {
 				
@@ -187,10 +178,6 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Item
 		idText.setText(id+"");
 		discountText.setText(discount+"");
 		
-//		nameCombo.setSelectedItem(nameCombo.getItemAt(row));
-//		nameCombo.setSelectedIndex(row);
-		itemChoice = id + "";
-//		System.out.println(nameCombo.getSelectedItem());
 	}
 
 	@Override
@@ -217,11 +204,7 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Item
 
 	}
 
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-		// TODO Auto-generated method stub
-		itemChoice = e.getItem().toString();
-	}
+	
 
 
 }

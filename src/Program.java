@@ -22,10 +22,9 @@ public class Program {
 		CartHandler.getInstance().getCart().add(new CartItem(2, product.getProduct(2), 1));
 		CartHandler.getInstance().getCart().add(new CartItem(3,product.getProduct(3), 3));
 		Employee employee = new Employee();
-		AuthHandler.getInstance().setEmployee(employee.getEmployee("username3")); 
-		
-//		ProductHandler.getInstance().viewProductManagementForm();
-		VoucherHandler.getInstance().viewVoucherManagementForm();
+		AuthHandler.getInstance().setEmployee(employee.getEmployee("username1"));
+		ProductHandler.getInstance().viewProductManagementForm();
+//		VoucherHandler.getInstance().viewVoucherManagementForm();
 		
 	}
 
