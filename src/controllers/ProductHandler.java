@@ -100,7 +100,13 @@ public class ProductHandler {
 		return product;
 	}
 
-	public Product updateProduct(Integer productID, String name, String description, String price) {
+	public Product updateProduct(String productID, String name, String description, String price,String stock) {
+		
+		if(productID.isEmpty()) {
+			this.statusCode = "failed";
+			this.statusMessage = "Please choose the product by clicking the row in the table";
+			return null;
+		}
 		if (name.isEmpty()) {
 			this.statusCode = "failed";
 			this.statusMessage = "Name cannot be empty!";
@@ -112,17 +118,39 @@ public class ProductHandler {
 			this.statusMessage = "Description cannot be empty!";
 			return null;
 		}
-
+		if(stock.isEmpty()) {
+			this.statusCode = "failed";
+			this.statusMessage = "Stock cannot be empty!";
+			return null;
+		}
+		
+		if(!Validate.isInteger(productID)) {
+			this.statusCode = "failed";
+			this.statusMessage = "Product ID must be Integer!";
+			return null;
+		}
 		if (!Validate.isInteger(price)) {
 			this.statusCode = "failed";
 			this.statusMessage = "Price must be Integer!";
 			return null;
 		}
-
-		Product product = this.getProduct(productID);
+		if(!Validate.isInteger(stock)) {
+			this.statusCode = "failed";
+			this.statusMessage = "Stock must be Integer!";
+			return null;
+		}
+		int qty = Integer.parseInt(stock);
+		if(qty < 1) {
+			this.statusCode = "failed";
+			this.statusMessage = "Stock cannot be less than zero!";
+			return null;
+		} 
+		Product product = this.getProduct(Integer.parseInt(productID));
+		
 		product.setName(name);
 		product.setDescription(description);
 		product.setPrice(Integer.parseInt(price));
+		product.setStock(qty);
 		product = product.updateProduct();
 
 		if (product == null) {
@@ -165,19 +193,25 @@ public class ProductHandler {
 		return product;
 	}
 
-	public Boolean deleteProduct(Integer productID) {
-		Product product = this.getProduct(productID);
-
+	public Boolean deleteProduct(String productID) {
+		if(productID.isEmpty()) {
+			this.statusCode = "failed";
+			this.statusMessage = "Please choose the product by clicking the row in the table";
+			return false;
+		}
+		Product product = this.getProduct(Integer.parseInt(productID));
+		
 		Boolean result = product.deleteProduct();
 
-		if (result == null) {
+		if (result == false) {
 			this.statusCode = "failed";
 			this.statusMessage = "Failed to delete product by product id.";
+			return false;
 		}
 
 		this.statusCode = "succeed";
 		this.statusMessage = "Succeed to delete product by product id.";
-
+		
 		return result;
 	}
 

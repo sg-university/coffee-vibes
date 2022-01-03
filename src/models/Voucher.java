@@ -48,7 +48,7 @@ public class Voucher {
 	}
 
 	public List<Voucher> getAllVouchers() {
-		String sql = String.format("SELECT * FROM %s", this.table);
+		String sql = String.format("SELECT * FROM %s WHERE status='active'", this.table);
 		try {
 			ResultSet rs = db.executeQuery(sql);
 			List<Voucher> listVoucher = new ArrayList<Voucher>();

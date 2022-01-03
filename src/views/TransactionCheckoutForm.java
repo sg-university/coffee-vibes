@@ -132,7 +132,18 @@ public class TransactionCheckoutForm extends JFrame implements ActionListener,It
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		// TODO Auto-generated method stub
-		voucherID = e.getItem().toString();
+		if(e.getSource() == comboVoucher) {
+			voucherID = e.getItem().toString();
+			if(voucherID.equals("")) {
+				labelTotal.setText("Total Price: " + totalPrice);
+			}else {
+				if(e.getStateChange() == 1) {
+					Voucher vouch = VoucherHandler.getInstance().getVoucher(Integer.parseInt(voucherID));
+					int temp = totalPrice-(totalPrice*vouch.getDiscount()/100);
+					labelTotal.setText("Total Price: "+temp);
+				}
+			}	
+		}		
 	}
 	
 	

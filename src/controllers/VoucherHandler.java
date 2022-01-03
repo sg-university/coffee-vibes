@@ -3,6 +3,8 @@ package controllers;
 import java.util.List;
 
 import models.Voucher;
+import utils.Validate;
+import views.VoucherManagementForm;
 
 public class VoucherHandler {
 	private static VoucherHandler voucherHandler = null;
@@ -37,7 +39,7 @@ public class VoucherHandler {
 	}
 
 	public void viewVoucherManagementForm() {
-
+		new VoucherManagementForm();
 	}
 
 	public List<Voucher> getAllVouchers() {
@@ -55,8 +57,20 @@ public class VoucherHandler {
 		return voucherList;
 	}
 
-	public Voucher insertVoucher(Integer discount) {
-		Voucher voucher = new Voucher(null, discount, "active");
+	public Voucher insertVoucher(String discount) {
+		if(discount.isEmpty()) {
+			this.statusCode = "failed";
+			this.statusMessage = "Discount Field cannot be empty";
+			return null;
+		}
+		
+		if(!Validate.isInteger(discount)) {
+			this.statusCode = "failed";
+			this.statusMessage = "Discount must be Integer!";
+			return null;
+		}
+		
+		Voucher voucher = new Voucher(null, Integer.parseInt(discount), "active");
 		Voucher insertedVoucher = voucher.insert();
 
 		if (insertedVoucher == null) {

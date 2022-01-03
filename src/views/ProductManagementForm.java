@@ -27,6 +27,7 @@ import controllers.AuthHandler;
 import controllers.CartHandler;
 import controllers.EmployeeHandler;
 import controllers.ProductHandler;
+import controllers.VoucherHandler;
 import models.CartItem;
 import models.Employee;
 import models.Product;
@@ -36,7 +37,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 	private JPanel PNLtop, PNLcenter, PNLbottom;
 	private JTextField nameText, descText, priceText, stockText, idText;
 	private JLabel nameLBL, descLBL, priceLBL, stockLBL, idLBL;
-	private JButton insertBut, updateBut, deleteBut, addCartBut, goToCartBut;
+	private JButton insertBut, updateBut, deleteBut, addCartBut, goToCartBut,voucherBut;
 	private JTable TBLproduct;
 	private DefaultTableModel dtm;
 	private List<Product> products;
@@ -113,7 +114,9 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 
 		addCartBut = new JButton("Add To Cart");
 		addCartBut.addActionListener(this);
-
+		
+		voucherBut = new JButton("Voucher Form >>");
+		voucherBut.addActionListener(this);
 		PNLbottom = new JPanel();
 		Employee employee = AuthHandler.getInstance().getEmployee();
 		if (employee != null) {
@@ -121,6 +124,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 				PNLbottom.add(insertBut);
 				PNLbottom.add(updateBut);
 				PNLbottom.add(deleteBut);
+				PNLbottom.add(voucherBut);
 			} else if (employee.getPosition().equals("barista")) {
 				nameText.setEditable(false);
 				idText.setEditable(false);
@@ -192,13 +196,28 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 				} else {
 					JOptionPane.showMessageDialog(this, "Insert Product Success!");
 					initTable();
+					resetField();
 				}
 			}
 
 		} else if (arg0.getSource() == updateBut) {
-			System.out.println("keklik update button");
+			if(JOptionPane.showConfirmDialog(this, "Do you want to update this product?") == 0) {
+				Product p = ProductHandler.getInstance().updateProduct(idText.getText(), nameText.getText(), descText.getText(), priceText.getText(),stockText.getText());
+				JOptionPane.showMessageDialog(this, ProductHandler.getInstance().getStatusMessage());
+				if(p != null) {
+					initTable();
+					resetField();
+				}
+			}
 		} else if (arg0.getSource() == deleteBut) {
-			System.out.println("keklik delete button");
+			if(JOptionPane.showConfirmDialog(this, "Are you sure want to delete this product?") == 0) {
+				boolean isDelete= ProductHandler.getInstance().deleteProduct(idText.getText());
+				JOptionPane.showMessageDialog(this, ProductHandler.getInstance().getStatusMessage());
+				if(isDelete) {
+					initTable();
+					resetField();
+				}
+			}
 		} else if (arg0.getSource() == addCartBut) {
 			int productID = Integer.parseInt(itemChoice);
 			Product product = ProductHandler.getInstance().getProduct(productID);
@@ -207,10 +226,19 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		} else if (arg0.getSource() == goToCartBut) {
 			this.dispose();
 			CartHandler.getInstance().viewCartManagementForm();
+		}else if(arg0.getSource() == voucherBut) {
+			this.dispose();
+			VoucherHandler.getInstance().viewVoucherManagementForm();
 		}
 
 	}
-
+	private void resetField() {
+		idText.setText("");
+		nameText.setText("");
+		descText.setText("");
+		priceText.setText("");
+		stockText.setText("");
+	}
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
