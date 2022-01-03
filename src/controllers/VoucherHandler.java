@@ -1,6 +1,7 @@
 package controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import models.Voucher;
 import utils.Validate;
@@ -57,19 +58,35 @@ public class VoucherHandler {
 		return voucherList;
 	}
 
+	public List<Voucher> getAllActiveVouchers() {
+		Voucher voucher = new Voucher();
+		List<Voucher> voucherList = voucher.getAllVouchers().parallelStream()
+				.filter(x -> x.getStatus().equals("active")).collect(Collectors.toList());
+
+		if (voucherList == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to get all voucher.";
+		}
+
+		this.statusCode = "succeed";
+		this.statusMessage = "Succeed to get all voucher.";
+
+		return voucherList;
+	}
+
 	public Voucher insertVoucher(String discount) {
-		if(discount.isEmpty()) {
+		if (discount.isEmpty()) {
 			this.statusCode = "failed";
 			this.statusMessage = "Discount Field cannot be empty";
 			return null;
 		}
-		
-		if(!Validate.isInteger(discount)) {
+
+		if (!Validate.isInteger(discount)) {
 			this.statusCode = "failed";
 			this.statusMessage = "Discount must be Integer!";
 			return null;
 		}
-		
+
 		Voucher voucher = new Voucher(null, Integer.parseInt(discount), "active");
 		Voucher insertedVoucher = voucher.insert();
 
@@ -85,7 +102,20 @@ public class VoucherHandler {
 	}
 
 	public Boolean deleteVoucher(Integer voucherID) {
-		Voucher voucher = new Voucher();
+		Voucher voucher = this.getVoucher(voucherID);
+
+		if (voucher == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to get voucher by voucher id.";
+			return false;
+		}
+
+		if (voucher.getStatus().equals("inactive")) {
+			this.statusCode = "failed";
+			this.statusMessage = "Failed to delete voucher by voucher id because the status is inactive.";
+			return false;
+		}
+
 		Boolean result = voucher.delete(voucherID);
 
 		if (result == false) {
