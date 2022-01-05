@@ -157,15 +157,19 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Mous
 
 		} else if (arg0.getSource() == deleteBut) {
 			if(JOptionPane.showConfirmDialog(this, "Are you sure want to delete this product?") == 0) {
-				
+				Boolean isDelete = VoucherHandler.getInstance().deleteVoucher(idText.getText());
+				JOptionPane.showMessageDialog(this, VoucherHandler.getInstance().getStatusMessage());
+				if(isDelete) {
+					initTable();
+				}
 			}
+		}else if(arg0.getSource() == productBut) {
+			this.dispose();
+			ProductHandler.getInstance().viewProductManagementForm();
 		}
 
 	}
-	private void resetField() {
-		idText.setText("");
 
-	}
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub

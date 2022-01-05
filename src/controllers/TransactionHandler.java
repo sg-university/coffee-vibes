@@ -1,6 +1,7 @@
 package controllers;
 
 import java.util.List;
+import java.util.Vector;
 
 import models.CartItem;
 import models.Transaction;
@@ -48,7 +49,7 @@ public class TransactionHandler {
 		if (transactionList == null) {
 			this.statusCode = "failed";
 			this.statusMessage = "Failed to get all transaction.";
-			return null;
+			return new Vector<Transaction>();
 		}
 
 		this.statusCode = "succeed";

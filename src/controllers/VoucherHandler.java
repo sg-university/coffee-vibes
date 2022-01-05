@@ -58,21 +58,7 @@ public class VoucherHandler {
 		return voucherList;
 	}
 
-	public List<Voucher> getAllActiveVouchers() {
-		Voucher voucher = new Voucher();
-		List<Voucher> voucherList = voucher.getAllVouchers().parallelStream()
-				.filter(x -> x.getStatus().equals("active")).collect(Collectors.toList());
-
-		if (voucherList == null) {
-			this.statusCode = "failed";
-			this.statusMessage = "Failed to get all voucher.";
-		}
-
-		this.statusCode = "succeed";
-		this.statusMessage = "Succeed to get all voucher.";
-
-		return voucherList;
-	}
+	
 
 	public Voucher insertVoucher(String discount) {
 		if (discount.isEmpty()) {
@@ -101,8 +87,19 @@ public class VoucherHandler {
 		return insertedVoucher;
 	}
 
-	public Boolean deleteVoucher(Integer voucherID) {
-		Voucher voucher = this.getVoucher(voucherID);
+	public Boolean deleteVoucher(String voucherID) {
+		if(voucherID.isEmpty()) {
+			this.statusCode = "failed";
+			this.statusMessage = "Please choose the voucher by clicking the rows in order to delete the voucher!";
+			return false;
+		}
+		if(!Validate.isInteger(voucherID)) {
+			this.statusCode = "failed";
+			this.statusMessage ="Voucher ID is not Integer!";
+			return false;
+		}
+		
+		Voucher voucher = this.getVoucher(Integer.parseInt(voucherID));
 
 		if (voucher == null) {
 			this.statusCode = "failed";
@@ -116,7 +113,7 @@ public class VoucherHandler {
 			return false;
 		}
 
-		Boolean result = voucher.delete(voucherID);
+		Boolean result = voucher.delete(Integer.parseInt(voucherID));
 
 		if (result == false) {
 			this.statusCode = "failed";

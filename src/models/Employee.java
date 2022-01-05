@@ -53,7 +53,23 @@ public class Employee {
 		}
 		return null;
 	}
-
+	
+	public Employee getEmployeeByID(int id) {
+		String sql = String.format("SELECT * FROM %s WHERE id=?", this.table);
+		PreparedStatement ps = this.db.prepareStatement(sql);
+		try {
+			ps.setInt(1, id);
+			ps.execute();
+			ResultSet rs = ps.getResultSet();
+			if(rs.next()) {
+				return map(rs);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return null;
+	}
+	
 	public Employee getEmployeeByCredentials(String username, String password) {
 		String sql = String.format("select * from %s where username = ? AND password = ?", this.table);
 		PreparedStatement ps = this.db.prepareStatement(sql);

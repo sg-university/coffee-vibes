@@ -4,6 +4,7 @@ import java.util.List;
 
 import models.Employee;
 import models.Position;
+import utils.Validate;
 
 public class EmployeeHandler {
 	private static EmployeeHandler employeeHandler = null;
@@ -16,7 +17,18 @@ public class EmployeeHandler {
 
 		return employeeHandler;
 	}
+	public Employee getEmployeeById(Integer id) {
 
+		Employee emp = new Employee();
+		Employee temp = emp.getEmployeeByID(id);
+		if(temp == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "There is no such employee exist";
+			return null;
+		}
+		return temp;
+		
+	}
 	private EmployeeHandler() {
 		// TODO Auto-generated constructor stub
 	}
