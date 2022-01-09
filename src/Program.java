@@ -19,11 +19,11 @@ public class Program {
 //		Product product = new Product();
 		Product product = new Product();
 		
-		CartHandler.getInstance().getCart().add(new CartItem(10,product.getProduct(1), 2));
-		CartHandler.getInstance().getCart().add(new CartItem(2, product.getProduct(2), 1));
-		CartHandler.getInstance().getCart().add(new CartItem(3,product.getProduct(3), 3));
+//		CartHandler.getInstance().getCart().add(new CartItem(10,product.getProduct(1), 2));
+//		CartHandler.getInstance().getCart().add(new CartItem(2, product.getProduct(2), 1));
+//		CartHandler.getInstance().getCart().add(new CartItem(3,product.getProduct(3), 3));
 		Employee employee = new Employee();
-		AuthHandler.getInstance().setEmployee(employee.getEmployee("username3"));
+		AuthHandler.getInstance().setEmployee(employee.getEmployee("username5"));
 //		ProductHandler.getInstance().viewProductManagementForm();
 //		VoucherHandler.getInstance().viewVoucherManagementForm();
 		new TransactionManagementForm();

@@ -12,6 +12,7 @@ public class Employee {
 	private Integer positionID;
 	private String name;
 	private Integer salary;
+	private String status;
 	private String username;
 	private String password;
 	private final String table = "employee";
@@ -22,6 +23,17 @@ public class Employee {
 	}
 
 	public Employee(Integer employeeID, Integer positionID, String name, Integer salary, String username,
+			String password,String status) {
+		super();
+		this.employeeID = employeeID;
+		this.positionID = positionID;
+		this.name = name;
+		this.salary = salary;
+		this.username = username;
+		this.password = password;
+		this.status = status;
+	}
+	public Employee(Integer employeeID, Integer positionID, String name, Integer salary, String username,
 			String password) {
 		super();
 		this.employeeID = employeeID;
@@ -30,6 +42,7 @@ public class Employee {
 		this.salary = salary;
 		this.username = username;
 		this.password = password;
+		this.status = "-";
 	}
 
 	@Override
@@ -46,7 +59,8 @@ public class Employee {
 			Integer salary = rs.getInt("salary");
 			String username = rs.getString("username");
 			String password = rs.getString("password");
-			Employee employee = new Employee(id, positionId, name, salary, username, password);
+			String stat = rs.getString("status");
+			Employee employee = new Employee(id, positionId, name, salary, username, password,stat);
 			return employee;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -55,7 +69,7 @@ public class Employee {
 	}
 	
 	public Employee getEmployeeByID(int id) {
-		String sql = String.format("SELECT * FROM %s WHERE id=?", this.table);
+		String sql = String.format("SELECT * FROM %s WHERE id=? ", this.table);
 		PreparedStatement ps = this.db.prepareStatement(sql);
 		try {
 			ps.setInt(1, id);
@@ -71,7 +85,7 @@ public class Employee {
 	}
 	
 	public Employee getEmployeeByCredentials(String username, String password) {
-		String sql = String.format("select * from %s where username = ? AND password = ?", this.table);
+		String sql = String.format("select * from %s where username = ? AND password = ? AND status!='not available'", this.table);
 		PreparedStatement ps = this.db.prepareStatement(sql);
 		try {
 			ps.setString(1, username);
@@ -118,7 +132,7 @@ public class Employee {
 	}
 
 	public List<Employee> getAllEmployees() {
-		String sql = String.format("select * from %s", this.table);
+		String sql = String.format("select * from %s WHERE status!='not available'", this.table);
 		PreparedStatement ps = this.db.prepareStatement(sql);
 		try {
 			ps.execute();
@@ -178,7 +192,7 @@ public class Employee {
 	}
 
 	public boolean fireEmployee(Integer employeeID) {
-		String sql = String.format("delete from %s WHERE id = ?", this.table);
+		String sql = String.format("update %s SET status='not available' WHERE id = ?", this.table);
 		PreparedStatement ps = this.db.prepareStatement(sql);
 		try {
 			ps.setInt(1, employeeID);
@@ -197,6 +211,16 @@ public class Employee {
 		Position position = new Position();
 		Position gotPosition = position.getPositionByEmployeeID(this.employeeID);
 		return gotPosition.gePositionName();
+	}
+	
+	
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Integer getEmployeeID() {

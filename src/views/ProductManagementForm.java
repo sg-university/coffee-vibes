@@ -64,7 +64,13 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 
 		String header[] = { "ID", "Nama", "Description", "Price", "Stock" };
 
-		dtm = new DefaultTableModel(header, 0);
+		dtm = new DefaultTableModel(header, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		};
 
 		TBLproduct = new JTable(dtm);
 		TBLproduct.setFillsViewportHeight(true);
@@ -151,7 +157,13 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		nameCombo.addItemListener(this);
 		nameCombo.addActionListener(this);
 
-		dtm = new DefaultTableModel(header, 0);
+		dtm = new DefaultTableModel(header, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		};
 		for (Product product : products) {
 			Vector<Object> row = new Vector<Object>();
 
