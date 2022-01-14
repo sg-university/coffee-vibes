@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Vector;
 
 import connect.Database;
 
@@ -28,8 +30,8 @@ public class TransactionItem {
 	private TransactionItem map(ResultSet rs) {
 		try {
 			Integer transactionId = rs.getInt(1);
-			Integer productId = rs.getInt(2);
-			Integer quantity = rs.getInt(3);
+			Integer productId = rs.getInt(3);
+			Integer quantity = rs.getInt(4);
 			return new TransactionItem(transactionId, productId, quantity);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -52,23 +54,25 @@ public class TransactionItem {
 		return false;
 	}
 
-	public TransactionItem getByTransactionId(Integer trasnsactionId) {
-		String sql = String.format("SELECT * FROM %s WHERE id=?", this.table);
+	public List<TransactionItem> getByTransactionId(Integer transactionId) {
+		String sql = String.format("SELECT * FROM %s WHERE transaction_id=?", this.table);
 
 		try {
 			PreparedStatement ps = db.prepareStatement(sql);
-			ps.setInt(1, transactionID);
+			ps.setInt(1, transactionId);
 			ps.execute();
 			ResultSet rs = ps.getResultSet();
+			Vector<TransactionItem> listItem = new Vector<TransactionItem>();
 			while (rs.next()) {
 				TransactionItem transactionItem = this.map(rs);
-				return transactionItem;
+				listItem.add(transactionItem);
 			}
+			return listItem;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		return null;
+		return new Vector<TransactionItem>();
 	}
 
 	public Integer getTransactionID() {

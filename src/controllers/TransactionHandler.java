@@ -1,13 +1,16 @@
 package controllers;
 
 import java.util.List;
+import java.util.Vector;
 
 import models.CartItem;
 import models.Transaction;
 import models.TransactionItem;
 import models.Voucher;
 import utils.Validate;
+import views.DetailTransactionForm;
 import views.TransactionCheckoutForm;
+import views.TransactionManagementForm;
 
 public class TransactionHandler {
 	private static TransactionHandler transactionHandler = null;
@@ -48,7 +51,7 @@ public class TransactionHandler {
 		if (transactionList == null) {
 			this.statusCode = "failed";
 			this.statusMessage = "Failed to get all transaction.";
-			return null;
+			return new Vector<Transaction>();
 		}
 
 		this.statusCode = "succeed";
@@ -60,13 +63,17 @@ public class TransactionHandler {
 	public Transaction getTransactionDetail(Integer transactionID) {
 		Transaction transaction = new Transaction();
 		transaction = transaction.getTransactionDetail(transactionID);
-
+		
+		
 		if (transaction == null) {
 			this.statusCode = "failed";
 			this.statusMessage = "Failed to get transaction detail.";
 			return null;
 		}
-
+		TransactionItem item = new TransactionItem();
+		List<TransactionItem> listItem = item.getByTransactionId(transactionID);
+		transaction.setListTransactionItem(listItem);
+		
 		this.statusCode = "succeed";
 		this.statusMessage = "Succeed to get transaction detail.";
 
@@ -151,9 +158,13 @@ public class TransactionHandler {
 	public void viewTransactionCheckout() {
 		new TransactionCheckoutForm();
 	}
-
+	
+	public void viewTransactionDetail(int id) {
+		new DetailTransactionForm(id);
+	}
+	
 	public void viewTransactionManagement() {
 		// TODO Auto-generated method stub
-
+		new TransactionManagementForm();
 	}
 }

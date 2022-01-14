@@ -48,7 +48,7 @@ public class Voucher {
 	}
 
 	public List<Voucher> getAllVouchers() {
-		String sql = String.format("SELECT * FROM %s", this.table);
+		String sql = String.format("SELECT * FROM %s WHERE status='active'", this.table);
 		try {
 			ResultSet rs = db.executeQuery(sql);
 			List<Voucher> listVoucher = new ArrayList<Voucher>();
@@ -96,7 +96,7 @@ public class Voucher {
 	}
 
 	public boolean delete(Integer voucherID) {
-		String sql = String.format("delete from %s where WHERE id=?", this.table);
+		String sql = String.format("UPDATE %s SET status='inactive' WHERE id=?", this.table);
 		PreparedStatement ps = db.prepareStatement(sql);
 		try {
 			ps.setInt(1, voucherID);

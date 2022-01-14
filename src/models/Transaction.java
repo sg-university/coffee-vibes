@@ -160,7 +160,7 @@ public class Transaction {
 	public Integer getEmployeeID() {
 		return employeeID;
 	}
-
+	
 	public void setEmployeeID(Integer employeeID) {
 		this.employeeID = employeeID;
 	}

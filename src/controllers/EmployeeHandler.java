@@ -4,6 +4,8 @@ import java.util.List;
 
 import models.Employee;
 import models.Position;
+import utils.Validate;
+import views.EmployeeManagementForm;
 
 public class EmployeeHandler {
 	private static EmployeeHandler employeeHandler = null;
@@ -16,14 +18,25 @@ public class EmployeeHandler {
 
 		return employeeHandler;
 	}
+	public Employee getEmployeeById(Integer id) {
 
+		Employee emp = new Employee();
+		Employee temp = emp.getEmployeeByID(id);
+		if(temp == null) {
+			this.statusCode = "failed";
+			this.statusMessage = "There is no such employee exist";
+			return null;
+		}
+		return temp;
+		
+	}
 	private EmployeeHandler() {
 		// TODO Auto-generated constructor stub
 	}
 
 	public void viewEmployeeManagementForm() {
 		// TODO Auto-generated method stub
-
+		new EmployeeManagementForm();
 	}
 
 	public String getStatusCode() {
@@ -159,11 +172,16 @@ public class EmployeeHandler {
 		return updatedEmployee;
 	}
 
-	public Boolean deleteEmployee(Integer employeeID) {
+	public Boolean deleteEmployee(String employeeID) {
+		if(employeeID.isEmpty() == true) {
+			this.statusCode = "failed";
+			this.statusMessage = "You must choose employee by click the row in the table!";
+			return false;
+		}
 		Employee employee = new Employee();
-		Boolean deletedEmploye = employee.fireEmployee(employeeID);
+		Boolean deletedEmployee = employee.fireEmployee(Integer.parseInt(employeeID));
 
-		if (deletedEmploye == false) {
+		if (deletedEmployee == false) {
 			this.statusCode = "failed";
 			this.statusMessage = "Failed to delete one employee by employee id.";
 		} else {
@@ -171,7 +189,7 @@ public class EmployeeHandler {
 			this.statusMessage = "Succeed to delete one employee by employee id.";
 		}
 
-		return deletedEmploye;
+		return deletedEmployee;
 	}
 
 	public Boolean fireEmployee(Integer employeeID) {

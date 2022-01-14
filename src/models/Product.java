@@ -62,7 +62,7 @@ public class Product {
 	}
 
 	public List<Product> getAllProduct() {
-		String query = String.format("SELECT * FROM %s", this.table);
+		String query = String.format("SELECT * FROM %s WHERE stock>0", this.table);
 
 		ResultSet rs = db.executeQuery(query);
 		List<Product> products = new ArrayList<Product>();
@@ -126,7 +126,7 @@ public class Product {
 	}
 
 	public Boolean deleteProduct() {
-		String sql = String.format("delete from %s WHERE id = ?", this.table);
+		String sql = String.format("UPDATE %s SET stock=0 WHERE id = ?", this.table);
 		PreparedStatement ps = this.db.prepareStatement(sql);
 		try {
 			ps.setInt(1, this.productID);
