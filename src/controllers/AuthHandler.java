@@ -45,7 +45,8 @@ public class AuthHandler {
 	}
 
 	public Boolean login(String username, String password) {
-		employee = employee.getEmployeeByCredentials(username, password);
+		Employee employeeModel = new Employee();
+		employee = employeeModel.getEmployeeByCredentials(username, password);
 
 		if (employee == null) {
 			this.statusMessage = "Failed to login by employee credentials.";

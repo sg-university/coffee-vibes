@@ -18,18 +18,20 @@ public class EmployeeHandler {
 
 		return employeeHandler;
 	}
+
 	public Employee getEmployeeById(Integer id) {
 
 		Employee emp = new Employee();
 		Employee temp = emp.getEmployeeByID(id);
-		if(temp == null) {
+		if (temp == null) {
 			this.statusCode = "failed";
 			this.statusMessage = "There is no such employee exist";
 			return null;
 		}
 		return temp;
-		
+
 	}
+
 	private EmployeeHandler() {
 		// TODO Auto-generated constructor stub
 	}
@@ -55,7 +57,7 @@ public class EmployeeHandler {
 		this.statusMessage = statusMessage;
 	}
 
-	public Employee insertEmployee(String name, String position, Integer salary, String username, String password) {
+	public Employee insertEmployee(String name, String position, String salary, String username, String password) {
 		Position positionModel = new Position();
 		List<Employee> employeeList = this.getAllEmployees();
 		List<Position> positionList = positionModel.getAllPosition();
@@ -67,7 +69,14 @@ public class EmployeeHandler {
 			return null;
 		}
 
-		Boolean isSalaryHigherThanOne = salary >= 1;
+		Boolean isSalaryInteger = Validate.isInteger(salary);
+		if (!isSalaryInteger) {
+			this.statusCode = "failed";
+			this.statusMessage = "Employee salary must be integer.";
+			return null;
+		}
+
+		Boolean isSalaryHigherThanOne = Integer.parseInt(salary) >= 1;
 		if (!isSalaryHigherThanOne) {
 			this.statusCode = "failed";
 			this.statusMessage = "Employee salary must be higher than or equal to 1.";
@@ -83,7 +92,7 @@ public class EmployeeHandler {
 
 		Integer positionID = positionList.parallelStream().filter(x -> x.gePositionName().equals(position)).findAny()
 				.get().getPositionID();
-		Employee employee = new Employee(salary, positionID, name, salary, username, password);
+		Employee employee = new Employee(null, positionID, name, Integer.parseInt(salary), username, password);
 		Employee insertedEmployee = employee.insertEmployee();
 		if (insertedEmployee == null) {
 			this.statusCode = "failed";
@@ -129,11 +138,18 @@ public class EmployeeHandler {
 		return gotEmploye;
 	}
 
-	public Employee updateEmployee(Integer employeeID, String name, String position, Integer salary, String username,
+	public Employee updateEmployee(String employeeID, String name, String position, String salary, String username,
 			String password) {
 		Position positionModel = new Position();
 		List<Employee> employeeList = this.getAllEmployees();
 		List<Position> positionList = positionModel.getAllPosition();
+
+		Boolean isIdInteger = Validate.isInteger(employeeID);
+		if (!isIdInteger) {
+			this.statusCode = "failed";
+			this.statusMessage = "Employee id must be integer.";
+			return null;
+		}
 
 		Boolean isPositionAvailable = positionList.parallelStream().anyMatch(x -> x.gePositionName().equals(position));
 		if (!isPositionAvailable) {
@@ -142,7 +158,14 @@ public class EmployeeHandler {
 			return null;
 		}
 
-		Boolean isSalaryHigherThanOne = salary >= 1;
+		Boolean isSalaryInteger = Validate.isInteger(salary);
+		if (!isSalaryInteger) {
+			this.statusCode = "failed";
+			this.statusMessage = "Employee salary must be integer.";
+			return null;
+		}
+
+		Boolean isSalaryHigherThanOne = Integer.parseInt(salary) >= 1;
 		if (!isSalaryHigherThanOne) {
 			this.statusCode = "failed";
 			this.statusMessage = "Employee salary must be higher than or equal to 1.";
@@ -158,7 +181,8 @@ public class EmployeeHandler {
 
 		Integer positionID = positionList.parallelStream().filter(x -> x.gePositionName().equals(position)).findAny()
 				.get().getPositionID();
-		Employee employee = new Employee(employeeID, positionID, name, salary, username, password);
+		Employee employee = new Employee(Integer.parseInt(employeeID), positionID, name, Integer.parseInt(salary),
+				username, password);
 		Employee updatedEmployee = employee.updateEmployee();
 		if (updatedEmployee == null) {
 			this.statusCode = "failed";
@@ -173,7 +197,7 @@ public class EmployeeHandler {
 	}
 
 	public Boolean deleteEmployee(String employeeID) {
-		if(employeeID.isEmpty() == true) {
+		if (employeeID.isEmpty() == true) {
 			this.statusCode = "failed";
 			this.statusMessage = "You must choose employee by click the row in the table!";
 			return false;

@@ -37,7 +37,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 	private JPanel PNLtop, PNLcenter, PNLbottom;
 	private JTextField nameText, descText, priceText, stockText, idText;
 	private JLabel nameLBL, descLBL, priceLBL, stockLBL, idLBL;
-	private JButton insertBut, updateBut, deleteBut, addCartBut, goToCartBut,voucherBut;
+	private JButton insertBut, updateBut, deleteBut, addCartBut, goToCartBut, voucherBut;
 	private JTable TBLproduct;
 	private DefaultTableModel dtm;
 	private List<Product> products;
@@ -120,7 +120,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 
 		addCartBut = new JButton("Add To Cart");
 		addCartBut.addActionListener(this);
-		
+
 		voucherBut = new JButton("Voucher Form >>");
 		voucherBut.addActionListener(this);
 		PNLbottom = new JPanel();
@@ -166,7 +166,6 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		};
 		for (Product product : products) {
 			Vector<Object> row = new Vector<Object>();
-
 			row.add(product.getProductID());
 			row.add(product.getName());
 			row.add(product.getDescription());
@@ -213,19 +212,20 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 			}
 
 		} else if (arg0.getSource() == updateBut) {
-			if(JOptionPane.showConfirmDialog(this, "Do you want to update this product?") == 0) {
-				Product p = ProductHandler.getInstance().updateProduct(idText.getText(), nameText.getText(), descText.getText(), priceText.getText(),stockText.getText());
+			if (JOptionPane.showConfirmDialog(this, "Do you want to update this product?") == 0) {
+				Product p = ProductHandler.getInstance().updateProduct(idText.getText(), nameText.getText(),
+						descText.getText(), priceText.getText(), stockText.getText());
 				JOptionPane.showMessageDialog(this, ProductHandler.getInstance().getStatusMessage());
-				if(p != null) {
+				if (p != null) {
 					initTable();
 					resetField();
 				}
 			}
 		} else if (arg0.getSource() == deleteBut) {
-			if(JOptionPane.showConfirmDialog(this, "Are you sure want to delete this product?") == 0) {
-				boolean isDelete= ProductHandler.getInstance().deleteProduct(idText.getText());
+			if (JOptionPane.showConfirmDialog(this, "Are you sure want to delete this product?") == 0) {
+				boolean isDelete = ProductHandler.getInstance().deleteProduct(idText.getText());
 				JOptionPane.showMessageDialog(this, ProductHandler.getInstance().getStatusMessage());
-				if(isDelete) {
+				if (isDelete) {
 					initTable();
 					resetField();
 				}
@@ -238,12 +238,13 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		} else if (arg0.getSource() == goToCartBut) {
 			this.dispose();
 			CartHandler.getInstance().viewCartManagementForm();
-		}else if(arg0.getSource() == voucherBut) {
+		} else if (arg0.getSource() == voucherBut) {
 			this.dispose();
 			VoucherHandler.getInstance().viewVoucherManagementForm();
 		}
 
 	}
+
 	private void resetField() {
 		idText.setText("");
 		nameText.setText("");
@@ -251,6 +252,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		priceText.setText("");
 		stockText.setText("");
 	}
+
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
@@ -268,9 +270,9 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		priceText.setText(price + "");
 		stockText.setText(stock + "");
 
-//		nameCombo.setSelectedItem(nameCombo.getItemAt(row));
 //		nameCombo.setSelectedIndex(row);
 		itemChoice = id + "";
+		nameCombo.setSelectedItem(itemChoice);
 //		System.out.println(nameCombo.getSelectedItem());
 	}
 
@@ -300,7 +302,6 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		// TODO Auto-generated method stub
 		itemChoice = e.getItem().toString();
 	}
 

@@ -25,6 +25,10 @@ public class Position {
 		this.positionName = positionName;
 	}
 
+	public String getPositionName() {
+		return positionName;
+	}
+
 	@Override
 	public String toString() {
 		return "Position [positionID=" + positionID + ", positionName=" + positionName + "]";
