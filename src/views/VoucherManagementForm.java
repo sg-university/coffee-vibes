@@ -31,7 +31,7 @@ import models.Employee;
 import models.Product;
 import models.Voucher;
 
-public class VoucherManagementForm extends JFrame implements ActionListener,MouseListener{
+public class VoucherManagementForm extends JFrame implements ActionListener, MouseListener {
 
 	private JPanel PNLtop, PNLcenter, PNLbottom;
 	private JTextField discountText, idText;
@@ -40,7 +40,6 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Mous
 	private JTable TBLproduct;
 	private DefaultTableModel dtm;
 	private List<Voucher> vouchers;
-
 
 	public VoucherManagementForm() {
 		// TODO Auto-generated constructor stub
@@ -60,12 +59,12 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Mous
 
 		JPanel PNLcenterBottom = new JPanel(layout);
 
-		Object[] header = { "ID", "Status","Discount(%)" };
+		Object[] header = { "ID", "Status", "Discount(%)" };
 
 		dtm = new DefaultTableModel(header, 0);
 
 		TBLproduct = new JTable(dtm);
-		
+
 		TBLproduct.setFillsViewportHeight(true);
 		TBLproduct.addMouseListener(this);
 
@@ -81,11 +80,9 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Mous
 
 		PNLcenterBottom.add(idLBL);
 		PNLcenterBottom.add(idText);
-		
+
 		PNLcenterBottom.add(discountLBL);
 		PNLcenterBottom.add(discountText);
-
-
 
 		insertBut = new JButton("Insert");
 		insertBut.addActionListener(this);
@@ -93,7 +90,7 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Mous
 		deleteBut = new JButton("Delete");
 		deleteBut.setBackground(Color.MAGENTA);
 		deleteBut.addActionListener(this);
-		
+
 		productBut = new JButton("Product Form >>");
 		productBut.addActionListener(this);
 		PNLbottom = new JPanel();
@@ -110,7 +107,7 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Mous
 	}
 
 	private void initTable() {
-		Object[] header = { "ID", "Status","Discount(%)" };
+		Object[] header = { "ID", "Status", "Discount(%)" };
 		vouchers = VoucherHandler.getInstance().getAllVouchers();
 
 		dtm = new DefaultTableModel(header, 0);
@@ -150,20 +147,20 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Mous
 			if (JOptionPane.showConfirmDialog(this, "Do you want to Insert?") == 0) {
 				Voucher v = VoucherHandler.getInstance().insertVoucher(discountText.getText());
 				JOptionPane.showMessageDialog(this, VoucherHandler.getInstance().getStatusMessage());
-				if(v != null) {
+				if (v != null) {
 					initTable();
 				}
 			}
 
 		} else if (arg0.getSource() == deleteBut) {
-			if(JOptionPane.showConfirmDialog(this, "Are you sure want to delete this product?") == 0) {
+			if (JOptionPane.showConfirmDialog(this, "Are you sure want to delete this product?") == 0) {
 				Boolean isDelete = VoucherHandler.getInstance().deleteVoucher(idText.getText());
 				JOptionPane.showMessageDialog(this, VoucherHandler.getInstance().getStatusMessage());
-				if(isDelete) {
+				if (isDelete) {
 					initTable();
 				}
 			}
-		}else if(arg0.getSource() == productBut) {
+		} else if (arg0.getSource() == productBut) {
 			this.dispose();
 			ProductHandler.getInstance().viewProductManagementForm();
 		}
@@ -178,10 +175,10 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Mous
 		Integer id = (int) TBLproduct.getValueAt(row, 0);
 
 		Integer discount = (int) TBLproduct.getValueAt(row, 2);
-		
-		idText.setText(id+"");
-		discountText.setText(discount+"");
-		
+
+		idText.setText(id + "");
+		discountText.setText(discount + "");
+
 	}
 
 	@Override
@@ -207,8 +204,5 @@ public class VoucherManagementForm extends JFrame implements ActionListener,Mous
 		// TODO Auto-generated method stub
 
 	}
-
-	
-
 
 }

@@ -14,19 +14,19 @@ import views.TransactionManagementForm;
 public class Program {
 
 	public Program() {
-//		AuthHandler.getInstance().viewLoginForm();
+		AuthHandler.getInstance().viewLoginForm();
 //		CartHandler.getInstance().viewCartManagementForm();
 //		Product product = new Product();
-		Product product = new Product();
-		
+//		Product product = new Product();
+
 //		CartHandler.getInstance().getCart().add(new CartItem(10,product.getProduct(1), 2));
 //		CartHandler.getInstance().getCart().add(new CartItem(2, product.getProduct(2), 1));
 //		CartHandler.getInstance().getCart().add(new CartItem(3,product.getProduct(3), 3));
 		Employee employee = new Employee();
-		AuthHandler.getInstance().setEmployee(employee.getEmployee("username5"));
+//		AuthHandler.getInstance().setEmployee(employee.getEmployee("username5"));
 //		ProductHandler.getInstance().viewProductManagementForm();
 //		VoucherHandler.getInstance().viewVoucherManagementForm();
-		new TransactionManagementForm();
+//		new TransactionManagementForm();
 	}
 
 	public static void main(String[] args) {
