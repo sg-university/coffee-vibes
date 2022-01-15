@@ -108,15 +108,10 @@ public class EmployeeManagementForm extends JFrame implements ActionListener, Mo
 		idLBL = new JLabel("Employee ID: ");
 
 		nameText = new JTextField();
-		nameText.setEditable(true);
 		statusText = new JTextField();
-		statusText.setEditable(true);
 		salaryText = new JTextField();
-		salaryText.setEditable(true);
 		usernameText = new JTextField();
-		usernameText.setEditable(true);
 		passText = new JTextField();
-		passText.setEditable(true);
 		idText = new JTextField();
 
 		PNLcenter = new JPanel(new GridLayout(3, 1));
@@ -151,6 +146,11 @@ public class EmployeeManagementForm extends JFrame implements ActionListener, Mo
 			deleteBut = new JButton("Fire");
 			deleteBut.setBackground(Color.MAGENTA);
 			deleteBut.addActionListener(this);
+			nameText.setEditable(false);
+			statusText.setEditable(false);
+			salaryText.setEditable(false);
+			usernameText.setEditable(false);
+			passText.setEditable(false);
 			PNLbottom.add(deleteBut);
 		} else if (emp.getPosition().equals("human resource")) {
 			insertBut = new JButton("Insert");
@@ -184,6 +184,7 @@ public class EmployeeManagementForm extends JFrame implements ActionListener, Mo
 		usernameText.setText("");
 		passText.setText("");
 		idText.setText("");
+		comboPosition.setSelectedItem("");
 	}
 
 	public void initFrame() {
@@ -232,6 +233,7 @@ public class EmployeeManagementForm extends JFrame implements ActionListener, Mo
 				JOptionPane.showMessageDialog(this, EmployeeHandler.getInstance().getStatusMessage());
 				if (isDelete) {
 					initTable();
+					resetField();
 				}
 			}
 		}

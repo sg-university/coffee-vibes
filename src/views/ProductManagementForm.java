@@ -25,10 +25,8 @@ import javax.swing.table.DefaultTableModel;
 
 import controllers.AuthHandler;
 import controllers.CartHandler;
-import controllers.EmployeeHandler;
 import controllers.ProductHandler;
 import controllers.VoucherHandler;
-import models.CartItem;
 import models.Employee;
 import models.Product;
 
@@ -171,7 +169,7 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 			row.add(product.getDescription());
 			row.add(product.getPrice());
 			row.add(product.getStock());
-			nameCombo.addItem(product.getProductID() + "");
+			nameCombo.addItem(product.getProductID().toString());
 			dtm.addRow(row);
 		}
 		TBLproduct.setModel(dtm);
@@ -258,20 +256,19 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 		// TODO Auto-generated method stub
 
 		int row = TBLproduct.getSelectedRow();
-		Integer id = (int) TBLproduct.getValueAt(row, 0);
-
+		Integer id = (Integer) TBLproduct.getValueAt(row, 0);
 		String name = (String) TBLproduct.getValueAt(row, 1);
 		String des = (String) TBLproduct.getValueAt(row, 2);
-		Integer price = (int) TBLproduct.getValueAt(row, 3);
-		Integer stock = (int) TBLproduct.getValueAt(row, 4);
-		idText.setText(id + "");
+		Integer price = (Integer) TBLproduct.getValueAt(row, 3);
+		Integer stock = (Integer) TBLproduct.getValueAt(row, 4);
+		idText.setText(id.toString());
 		nameText.setText(name);
 		descText.setText(des);
-		priceText.setText(price + "");
-		stockText.setText(stock + "");
+		priceText.setText(price.toString());
+		stockText.setText(stock.toString());
 
 //		nameCombo.setSelectedIndex(row);
-		itemChoice = id + "";
+		itemChoice = id.toString();
 		nameCombo.setSelectedItem(itemChoice);
 //		System.out.println(nameCombo.getSelectedItem());
 	}
@@ -303,6 +300,19 @@ public class ProductManagementForm extends JFrame implements ActionListener, Mou
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		itemChoice = e.getItem().toString();
+
+		Product product = ProductHandler.getInstance().getProduct(Integer.parseInt(itemChoice));
+
+		String id = product.getProductID().toString();
+		String name = product.getName();
+		String des = product.getDescription();
+		String price = product.getPrice().toString();
+		String stock = product.getStock().toString();
+		idText.setText(id);
+		nameText.setText(name);
+		descText.setText(des);
+		priceText.setText(price);
+		stockText.setText(stock);
 	}
 
 }
